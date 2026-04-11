@@ -1,0 +1,75 @@
+Functional Source License, Version 1.1, Apache 2.0 Future License
+
+Licensor:             [Your Name/Company]
+Licensed Work:        Claw-dex v0.1.0
+                      The Licensed Work is (c) 2026 [Your Name/Company]
+
+Additional Use Grant: You may make use of the Licensed Work, provided that
+                      you do not use the Licensed Work for an AI Agent Memory
+                      Service.
+
+                      An "AI Agent Memory Service" is a commercial offering
+                      that allows third parties to access the functionality
+                      of the Licensed Work by providing memory, knowledge
+                      storage, or learning capabilities for AI coding agents
+                      as a hosted or managed service.
+
+                      Self-hosting for personal or internal company use is
+                      always permitted.
+
+Change Date:          2030-04-11 (4 years from release)
+
+Change License:       Apache License, Version 2.0
+
+For information about alternative licensing arrangements, contact:
+[your-email@example.com]
+
+-----------------------------------------------------------------------------
+
+TERMS AND CONDITIONS
+
+1. Acceptance
+   By using the Licensed Work, you agree to these terms.
+
+2. Copyright License
+   The Licensor grants you a non-exclusive, royalty-free, worldwide license to:
+   - Use, copy, and distribute the Licensed Work
+   - Prepare derivative works
+   - Self-host for personal or internal company use
+   Subject to the limitations below.
+
+3. Limitations
+   You may NOT:
+   - Offer the Licensed Work as a hosted/managed service to third parties
+   - Remove or obscure licensing, copyright, or other notices
+
+   You MAY:
+   - Use it for any personal project
+   - Use it within your company
+   - Modify it for your own use
+   - Contribute improvements back
+
+4. Patents
+   The Licensor grants you a patent license for the Licensed Work,
+   subject to the limitations above.
+
+5. No Warranty
+   THE LICENSED WORK IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+
+6. Future License
+   On the Change Date, this license automatically converts to Apache 2.0,
+   granting full open-source rights including commercial service use.
+
+-----------------------------------------------------------------------------
+
+WHY THIS LICENSE?
+
+We want Claw-dex to be:
+- Free for developers to use and learn from
+- Free for companies to self-host internally
+- Protected from being copied and sold as a competing service
+
+After 4 years, it becomes fully open source (Apache 2.0).
+
+This follows the model used by Sentry, MariaDB, and other successful
+open-source companies that need sustainable business models.
