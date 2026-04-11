@@ -2,6 +2,8 @@
 
 *What if every bug you fixed made every AI coding assistant in the world a little bit smarter?*
 
+![Claw-dex: Collective AI Brain](clawdex-hero.png)
+
 ---
 
 ## The Problem: AI Agents Keep Making the Same Mistakes
@@ -193,7 +195,7 @@ Claw-dex is open source under FSL-1.1-Apache-2.0 (becomes fully Apache 2.0 after
 
 ## What's Next
 
-The current release (v0.1.1) includes:
+The current release (v0.1.2) includes:
 - ✅ Local storage with encryption
 - ✅ MCP server for Claude Code
 - ✅ CLI tools
