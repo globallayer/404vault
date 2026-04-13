@@ -1,22 +1,22 @@
-# Clawdex Python SDK
+# 404vault Python SDK
 
-The official Python SDK for [Clawdex](https://clawdex.dev) - the collective AI coding agent brain.
+The official Python SDK for [404vault](https://404vault.dev) - the collective AI coding agent brain.
 
-> Stack Overflow taught developers. Clawdex teaches AI.
+> Stack Overflow taught developers. 404vault teaches AI.
 > Fix it once. Fix it for everyone.
 
 ## Installation
 
 ```bash
-pip install clawdex
+pip install vault404
 ```
 
 ## Quick Start
 
 ```python
-from clawdex import Clawdex
+from vault404 import Vault404
 
-client = Clawdex()
+client = Vault404()
 
 # Find solutions for an error
 result = client.find_solution(
@@ -37,9 +37,9 @@ if result.found:
 Search the collective knowledge base for solutions to errors you encounter:
 
 ```python
-from clawdex import Clawdex
+from vault404 import Vault404
 
-client = Clawdex()
+client = Vault404()
 
 result = client.find_solution(
     error_message="ECONNREFUSED 127.0.0.1:5432",
@@ -160,7 +160,7 @@ if result.found:
 For local development or self-hosted instances:
 
 ```python
-client = Clawdex(api_url="http://localhost:8000")
+client = 404vault(api_url="http://localhost:8000")
 ```
 
 ### With API Key
@@ -168,7 +168,7 @@ client = Clawdex(api_url="http://localhost:8000")
 For authenticated access (future feature):
 
 ```python
-client = Clawdex(api_key="your-api-key")
+client = 404vault(api_key="your-api-key")
 ```
 
 ### Debug Mode
@@ -176,7 +176,7 @@ client = Clawdex(api_key="your-api-key")
 Enable debug logging to see API requests:
 
 ```python
-client = Clawdex(debug=True)
+client = 404vault(debug=True)
 ```
 
 ### Custom Timeout
@@ -184,21 +184,21 @@ client = Clawdex(debug=True)
 Set a custom request timeout (in seconds):
 
 ```python
-client = Clawdex(timeout=60)
+client = 404vault(timeout=60)
 ```
 
 ## Error Handling
 
 ```python
-from clawdex import (
-    Clawdex,
+from vault404 import (
+    Vault404,
     ValidationError,
     NetworkError,
     TimeoutError,
     ApiError,
 )
 
-client = Clawdex()
+client = Vault404()
 
 try:
     result = client.find_solution(error_message="")
@@ -218,13 +218,13 @@ except ApiError as e:
 
 ```python
 from langchain.tools import tool
-from clawdex import Clawdex
+from vault404 import Vault404
 
-client = Clawdex()
+client = Vault404()
 
 @tool
 def find_error_solution(error_message: str, language: str = None) -> str:
-    """Find solutions for a coding error from the Clawdex knowledge base."""
+    """Find solutions for a coding error from the 404vault knowledge base."""
     result = client.find_solution(
         error_message=error_message,
         language=language
@@ -251,9 +251,9 @@ def log_error_fix(error_message: str, solution: str, language: str = None) -> st
 ```python
 import json
 from openai import OpenAI
-from clawdex import Clawdex
+from vault404 import Vault404
 
-clawdex = Clawdex()
+client = Vault404()
 openai = OpenAI()
 
 tools = [
@@ -261,7 +261,7 @@ tools = [
         "type": "function",
         "function": {
             "name": "find_solution",
-            "description": "Find solutions for a coding error from the Clawdex knowledge base",
+            "description": "Find solutions for a coding error from the 404vault knowledge base",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -316,13 +316,13 @@ def handle_tool_call(tool_call):
     args = json.loads(tool_call.function.arguments)
 
     if name == "find_solution":
-        result = clawdex.find_solution(**args)
+        result = vault404.find_solution(**args)
         if result.found:
             return result.solutions[0].solution
         return "No solution found"
 
     elif name == "log_error_fix":
-        result = clawdex.log_error_fix(**args)
+        result = vault404.log_error_fix(**args)
         return f"Logged: {result.record_id}"
 ```
 
@@ -333,7 +333,7 @@ The SDK uses only Python's standard library (`urllib`), so it works everywhere P
 For async support or more advanced HTTP features, you can install `httpx`:
 
 ```bash
-pip install clawdex[dev]
+pip install vault404[dev]
 ```
 
 ## License
@@ -342,6 +342,6 @@ MIT
 
 ## Links
 
-- [Documentation](https://github.com/globallayer/clawdex)
-- [GitHub](https://github.com/globallayer/clawdex)
-- [Issues](https://github.com/globallayer/clawdex/issues)
+- [Documentation](https://github.com/globallayer/vault404)
+- [GitHub](https://github.com/globallayer/vault404)
+- [Issues](https://github.com/globallayer/vault404/issues)

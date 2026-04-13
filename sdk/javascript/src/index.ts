@@ -1,7 +1,7 @@
 /**
- * Clawdex TypeScript SDK
+ * Vault404 TypeScript SDK
  *
- * The official SDK for interacting with Clawdex - the collective AI coding agent brain.
+ * The official SDK for interacting with Vault404 - the collective AI coding agent brain.
  * Every verified fix makes ALL AI agents smarter.
  *
  * @packageDocumentation
@@ -9,18 +9,18 @@
  * @example
  * Basic Usage
  * ```typescript
- * import { ClawdexClient } from 'clawdex';
+ * import { Vault404Client } from 'vault404';
  *
- * const clawdex = new ClawdexClient();
+ * const vault404 = new Vault404Client();
  *
  * // Find solutions for an error
- * const result = await clawdex.findSolution({
+ * const result = await vault404.findSolution({
  *   errorMessage: 'Cannot find module react',
  *   language: 'typescript'
  * });
  *
  * // Log an error fix
- * await clawdex.logErrorFix({
+ * await vault404.logErrorFix({
  *   errorMessage: 'Module not found',
  *   solution: 'Run npm install'
  * });
@@ -29,9 +29,9 @@
  * @example
  * With Custom Configuration
  * ```typescript
- * import { ClawdexClient } from 'clawdex';
+ * import { Vault404Client } from 'vault404';
  *
- * const clawdex = new ClawdexClient({
+ * const vault404 = new Vault404Client({
  *   apiUrl: 'http://localhost:8000',
  *   timeout: 60000,
  *   debug: true
@@ -41,12 +41,12 @@
  * @example
  * Error Handling
  * ```typescript
- * import { ClawdexClient, NetworkError, ValidationError } from 'clawdex';
+ * import { Vault404Client, NetworkError, ValidationError } from 'vault404';
  *
- * const clawdex = new ClawdexClient();
+ * const vault404 = new Vault404Client();
  *
  * try {
- *   await clawdex.findSolution({ errorMessage: '' });
+ *   await vault404.findSolution({ errorMessage: '' });
  * } catch (error) {
  *   if (error instanceof ValidationError) {
  *     console.log('Invalid input:', error.field);
@@ -58,11 +58,11 @@
  */
 
 // Main client
-export { ClawdexClient } from "./client.js";
+export { Vault404Client } from "./client.js";
 
 // Error classes
 export {
-  ClawdexError,
+  Vault404Error,
   NetworkError,
   ApiError,
   TimeoutError,
@@ -75,7 +75,7 @@ export {
 // Types
 export type {
   // Configuration
-  ClawdexClientOptions,
+  Vault404ClientOptions,
 
   // Context
   Context,
@@ -105,7 +105,7 @@ export type {
   VerifySolutionResult,
 
   // Stats types
-  ClawdexStats,
+  Vault404Stats,
   StatsResult,
 
   // Generic result types
@@ -116,4 +116,4 @@ export type {
 export const VERSION = "0.1.0";
 
 // Default export for convenience
-export { ClawdexClient as default } from "./client.js";
+export { Vault404Client as default } from "./client.js";

@@ -1,28 +1,28 @@
-# Clawdex SDK
+# 404vault SDK
 
-The official TypeScript/JavaScript SDK for **Clawdex** - the collective AI coding agent brain.
+The official TypeScript/JavaScript SDK for **404vault** - the collective AI coding agent brain.
 
 Every verified fix makes ALL AI agents smarter. Automatic sharing, fully anonymized.
 
 ## Installation
 
 ```bash
-npm install clawdex
+npm install 404vault
 # or
-yarn add clawdex
+yarn add 404vault
 # or
-pnpm add clawdex
+pnpm add 404vault
 ```
 
 ## Quick Start
 
 ```typescript
-import { ClawdexClient } from 'clawdex';
+import { 404vaultClient } from '404vault';
 
-const clawdex = new ClawdexClient();
+const 404vault = new 404vaultClient();
 
 // Find solutions for an error
-const result = await clawdex.findSolution({
+const result = await 404vault.findSolution({
   errorMessage: 'Cannot find module react',
   language: 'typescript',
   framework: 'nextjs'
@@ -48,8 +48,8 @@ if (result.found) {
 ### Client Configuration
 
 ```typescript
-const clawdex = new ClawdexClient({
-  apiUrl: 'https://api.clawdex.dev', // Default API URL
+const 404vault = new 404vaultClient({
+  apiUrl: 'https://api.404vault.dev', // Default API URL
   apiKey: 'your-api-key',            // Optional, for future use
   timeout: 30000,                     // Request timeout in ms
   debug: false                        // Enable debug logging
@@ -59,7 +59,7 @@ const clawdex = new ClawdexClient({
 ### Finding Solutions
 
 ```typescript
-const result = await clawdex.findSolution({
+const result = await 404vault.findSolution({
   errorMessage: 'ECONNREFUSED 127.0.0.1:5432',
   language: 'typescript',
   framework: 'express',
@@ -87,7 +87,7 @@ const result = await clawdex.findSolution({
 ### Logging Error Fixes
 
 ```typescript
-const result = await clawdex.logErrorFix({
+const result = await 404vault.logErrorFix({
   errorMessage: 'Module not found: lodash',
   solution: 'Run npm install lodash',
   errorType: 'ModuleNotFoundError',
@@ -105,7 +105,7 @@ console.log('Record ID:', result.recordId);
 
 ```typescript
 // After trying a solution that worked
-const result = await clawdex.verifySolution({
+const result = await 404vault.verifySolution({
   id: 'solution-id',
   success: true
 });
@@ -118,7 +118,7 @@ if (result.contributed) {
 ### Logging Decisions
 
 ```typescript
-await clawdex.logDecision({
+await 404vault.logDecision({
   title: 'State management library',
   choice: 'Zustand',
   alternatives: ['Redux', 'Context API', 'Jotai'],
@@ -133,7 +133,7 @@ await clawdex.logDecision({
 ### Finding Decisions
 
 ```typescript
-const result = await clawdex.findDecision({
+const result = await 404vault.findDecision({
   topic: 'database choice',
   project: 'my-app',
   limit: 5
@@ -147,7 +147,7 @@ for (const decision of result.decisions) {
 ### Logging Patterns
 
 ```typescript
-await clawdex.logPattern({
+await 404vault.logPattern({
   name: 'Optimistic UI updates',
   category: 'frontend',
   problem: 'Slow UI feedback when waiting for API responses',
@@ -162,7 +162,7 @@ await clawdex.logPattern({
 ### Finding Patterns
 
 ```typescript
-const result = await clawdex.findPattern({
+const result = await 404vault.findPattern({
   problem: 'database connection pooling',
   category: 'database',
   language: 'typescript',
@@ -177,7 +177,7 @@ for (const pattern of result.patterns) {
 ### Getting Stats
 
 ```typescript
-const result = await clawdex.getStats();
+const result = await 404vault.getStats();
 
 console.log('Total records:', result.stats.totalRecords);
 console.log('Error fixes:', result.stats.errorFixes);
@@ -191,8 +191,8 @@ The SDK provides specific error classes for different failure scenarios:
 
 ```typescript
 import {
-  ClawdexClient,
-  ClawdexError,      // Base error class
+  404vaultClient,
+  404vaultError,      // Base error class
   NetworkError,      // Network/connection issues
   ApiError,          // API returned an error
   TimeoutError,      // Request timed out
@@ -200,10 +200,10 @@ import {
   AuthenticationError, // Auth failed
   RateLimitError,    // Rate limit exceeded
   NotFoundError      // Resource not found
-} from 'clawdex';
+} from '404vault';
 
 try {
-  await clawdex.findSolution({ errorMessage: '' });
+  await 404vault.findSolution({ errorMessage: '' });
 } catch (error) {
   if (error instanceof ValidationError) {
     console.log('Invalid input:', error.field);
@@ -226,7 +226,7 @@ The SDK is written in TypeScript and provides full type definitions:
 
 ```typescript
 import type {
-  ClawdexClientOptions,
+  404vaultClientOptions,
   Context,
   LogErrorFixOptions,
   FindSolutionOptions,
@@ -238,25 +238,25 @@ import type {
   LogPatternOptions,
   FindPatternResult,
   Pattern,
-  ClawdexStats
-} from 'clawdex';
+  404vaultStats
+} from '404vault';
 ```
 
 ## LangChain Integration
 
-See `examples/with-langchain.ts` for a complete example of integrating Clawdex with LangChain agents.
+See `examples/with-langchain.ts` for a complete example of integrating 404vault with LangChain agents.
 
 ```typescript
 import { DynamicTool } from "@langchain/core/tools";
-import { ClawdexClient } from 'clawdex';
+import { 404vaultClient } from '404vault';
 
-const clawdex = new ClawdexClient();
+const 404vault = new 404vaultClient();
 
 const findSolutionTool = new DynamicTool({
-  name: "clawdex_find_solution",
+  name: "404vault_find_solution",
   description: "Search for solutions to coding errors",
   func: async (errorMessage: string) => {
-    const result = await clawdex.findSolution({ errorMessage });
+    const result = await 404vault.findSolution({ errorMessage });
     return result.found
       ? result.solutions.map(s => s.solution).join('\n')
       : 'No solutions found';
@@ -276,4 +276,4 @@ MIT
 
 ## Contributing
 
-Contributions are welcome! Please see the [Clawdex repository](https://github.com/globallayer/clawdex) for contribution guidelines.
+Contributions are welcome! Please see the [404vault repository](https://github.com/globallayer/404vault) for contribution guidelines.

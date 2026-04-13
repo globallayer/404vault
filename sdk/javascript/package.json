@@ -1,8 +1,8 @@
 {
-  "name": "clawdex",
+  "name": "404vault",
   "version": "0.1.0",
-  "description": "TypeScript/JavaScript SDK for Clawdex - the collective AI coding agent brain",
-  "author": "Clawdex Contributors",
+  "description": "TypeScript/JavaScript SDK for 404vault - the collective AI coding agent brain",
+  "author": "GlobalLayer",
   "license": "MIT",
   "keywords": [
     "ai",
@@ -14,15 +14,17 @@
     "patterns",
     "decisions",
     "mcp",
-    "claude"
+    "openai",
+    "llm",
+    "404vault"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/globallayer/clawdex"
+    "url": "https://github.com/globallayer/404vault"
   },
-  "homepage": "https://clawdex.dev",
+  "homepage": "https://404vault.dev",
   "bugs": {
-    "url": "https://github.com/globallayer/clawdex/issues"
+    "url": "https://github.com/globallayer/404vault/issues"
   },
   "type": "module",
   "main": "./dist/index.cjs",

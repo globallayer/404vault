@@ -1,4 +1,4 @@
-"""Tests for the Clawdex Python SDK client."""
+"""Tests for the Vault404 Python SDK client."""
 
 import pytest
 from unittest.mock import patch, MagicMock
@@ -10,9 +10,9 @@ from pathlib import Path
 # Add src to path for testing
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from clawdex import (
-    Clawdex,
-    ClawdexClient,
+from vault404 import (
+    Vault404,
+    Vault404Client,
     ValidationError,
     NetworkError,
     Context,
@@ -22,27 +22,27 @@ from clawdex import (
 )
 
 
-class TestClawdexClient:
-    """Test the Clawdex client initialization and configuration."""
+class TestVault404Client:
+    """Test the Vault404 client initialization and configuration."""
 
     def test_default_initialization(self):
         """Test client initializes with default values."""
-        client = Clawdex()
-        assert client.api_url == "https://api.clawdex.dev"
+        client = Vault404()
+        assert client.api_url == "https://api.vault404.dev"
 
     def test_custom_api_url(self):
         """Test client accepts custom API URL."""
-        client = Clawdex(api_url="http://localhost:8000")
+        client = Vault404(api_url="http://localhost:8000")
         assert client.api_url == "http://localhost:8000"
 
     def test_url_normalization(self):
         """Test trailing slashes are removed from API URL."""
-        client = Clawdex(api_url="http://localhost:8000/")
+        client = Vault404(api_url="http://localhost:8000/")
         assert client.api_url == "http://localhost:8000"
 
-    def test_clawdex_client_alias(self):
-        """Test ClawdexClient is an alias for Clawdex."""
-        assert ClawdexClient is Clawdex
+    def test_vault404_client_alias(self):
+        """Test Vault404Client is an alias for Vault404."""
+        assert Vault404Client is Vault404
 
 
 class TestValidation:
@@ -50,21 +50,21 @@ class TestValidation:
 
     def test_find_solution_requires_error_message(self):
         """Test find_solution validates error_message is required."""
-        client = Clawdex()
+        client = Vault404()
         with pytest.raises(ValidationError) as exc_info:
             client.find_solution(error_message=None)
         assert exc_info.value.field == "error_message"
 
     def test_find_solution_rejects_empty_error_message(self):
         """Test find_solution rejects empty error_message."""
-        client = Clawdex()
+        client = Vault404()
         with pytest.raises(ValidationError) as exc_info:
             client.find_solution(error_message="   ")
         assert exc_info.value.field == "error_message"
 
     def test_log_error_fix_requires_both_fields(self):
         """Test log_error_fix validates both required fields."""
-        client = Clawdex()
+        client = Vault404()
 
         with pytest.raises(ValidationError) as exc_info:
             client.log_error_fix(error_message=None, solution="fix")
@@ -76,7 +76,7 @@ class TestValidation:
 
     def test_log_decision_requires_title_and_choice(self):
         """Test log_decision validates required fields."""
-        client = Clawdex()
+        client = Vault404()
 
         with pytest.raises(ValidationError):
             client.log_decision(title=None, choice="option")
@@ -86,7 +86,7 @@ class TestValidation:
 
     def test_log_pattern_requires_all_fields(self):
         """Test log_pattern validates all required fields."""
-        client = Clawdex()
+        client = Vault404()
 
         with pytest.raises(ValidationError):
             client.log_pattern(name=None, category="cat", problem="prob", solution="sol")
@@ -162,7 +162,7 @@ class TestHealthCheck:
 
     def test_health_check_returns_bool(self):
         """Test health_check returns a boolean."""
-        client = Clawdex(api_url="http://invalid-url-that-does-not-exist.local")
+        client = Vault404(api_url="http://invalid-url-that-does-not-exist.local")
         # Should return False for unreachable server (not raise)
         result = client.health_check()
         assert isinstance(result, bool)

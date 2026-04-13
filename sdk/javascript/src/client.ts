@@ -1,14 +1,14 @@
 /**
- * Clawdex TypeScript SDK - Client
+ * Vault404 TypeScript SDK - Client
  *
- * Main client class for interacting with the Clawdex API.
+ * Main client class for interacting with the Vault404 API.
  * Provides methods for logging and querying error fixes, decisions, and patterns.
  *
- * @module clawdex/client
+ * @module vault404/client
  */
 
 import {
-  ClawdexClientOptions,
+  Vault404ClientOptions,
   LogErrorFixOptions,
   LogDecisionOptions,
   LogPatternOptions,
@@ -33,7 +33,7 @@ import {
 } from "./types.js";
 
 import {
-  ClawdexError,
+  Vault404Error,
   NetworkError,
   ApiError,
   TimeoutError,
@@ -46,14 +46,14 @@ import {
 /**
  * Default configuration values
  */
-const DEFAULT_API_URL = "https://api.clawdex.dev";
+const DEFAULT_API_URL = "https://api.vault404.dev";
 const DEFAULT_TIMEOUT = 30000;
 const API_VERSION = "v1";
 
 /**
- * ClawdexClient - Main client for interacting with the Clawdex API
+ * Vault404Client - Main client for interacting with the Vault404 API
  *
- * The Clawdex client provides methods to:
+ * The Vault404 client provides methods to:
  * - Find solutions to errors from the collective knowledge base
  * - Log error fixes to help other AI agents
  * - Record architectural decisions for future reference
@@ -62,15 +62,15 @@ const API_VERSION = "v1";
  *
  * @example
  * ```typescript
- * import { ClawdexClient } from 'clawdex';
+ * import { Vault404Client } from 'vault404';
  *
- * const clawdex = new ClawdexClient({
- *   apiUrl: 'https://api.clawdex.dev',
+ * const vault404 = new Vault404Client({
+ *   apiUrl: 'https://api.vault404.dev',
  *   timeout: 30000
  * });
  *
  * // Find solutions for an error
- * const result = await clawdex.findSolution({
+ * const result = await vault404.findSolution({
  *   errorMessage: 'Cannot find module react',
  *   language: 'typescript',
  *   framework: 'nextjs'
@@ -81,7 +81,7 @@ const API_VERSION = "v1";
  * }
  * ```
  */
-export class ClawdexClient {
+export class Vault404Client {
   private readonly apiUrl: string;
   private readonly apiKey?: string;
   private readonly timeout: number;
@@ -89,28 +89,28 @@ export class ClawdexClient {
   private readonly debug: boolean;
 
   /**
-   * Creates a new ClawdexClient instance
+   * Creates a new Vault404Client instance
    *
    * @param options - Configuration options for the client
    *
    * @example
    * ```typescript
    * // With default settings (production API)
-   * const clawdex = new ClawdexClient();
+   * const vault404 = new Vault404Client();
    *
    * // With custom API URL (local development)
-   * const clawdex = new ClawdexClient({
+   * const vault404 = new Vault404Client({
    *   apiUrl: 'http://localhost:8000'
    * });
    *
    * // With API key and custom timeout
-   * const clawdex = new ClawdexClient({
+   * const vault404 = new Vault404Client({
    *   apiKey: 'your-api-key',
    *   timeout: 60000
    * });
    * ```
    */
-  constructor(options: ClawdexClientOptions = {}) {
+  constructor(options: Vault404ClientOptions = {}) {
     this.apiUrl = this.normalizeUrl(options.apiUrl ?? DEFAULT_API_URL);
     this.apiKey = options.apiKey;
     this.timeout = options.timeout ?? DEFAULT_TIMEOUT;
@@ -119,7 +119,7 @@ export class ClawdexClient {
     this.headers = {
       "Content-Type": "application/json",
       Accept: "application/json",
-      "User-Agent": "clawdex-sdk/0.1.0",
+      "User-Agent": "vault404-sdk/0.1.0",
       ...options.headers,
     };
 
@@ -140,12 +140,12 @@ export class ClawdexClient {
    */
   private log(message: string, data?: unknown): void {
     if (this.debug) {
-      console.log(`[Clawdex] ${message}`, data ?? "");
+      console.log(`[Vault404] ${message}`, data ?? "");
     }
   }
 
   /**
-   * Make an HTTP request to the Clawdex API
+   * Make an HTTP request to the Vault404 API
    */
   private async request<T>(
     method: "GET" | "POST" | "PUT" | "DELETE",
@@ -190,7 +190,7 @@ export class ClawdexClient {
     } catch (error) {
       clearTimeout(timeoutId);
 
-      if (error instanceof ClawdexError) {
+      if (error instanceof Vault404Error) {
         throw error;
       }
 
@@ -209,7 +209,7 @@ export class ClawdexClient {
         });
       }
 
-      throw new ClawdexError("An unexpected error occurred", {
+      throw new Vault404Error("An unexpected error occurred", {
         context: { error },
       });
     }
@@ -259,7 +259,7 @@ export class ClawdexClient {
   // ===========================================================================
 
   /**
-   * Find solutions for an error from the Clawdex knowledge base.
+   * Find solutions for an error from the Vault404 knowledge base.
    *
    * This should be the first thing you check when encountering an error.
    * Solutions are ranked by relevance based on error similarity and context match.
@@ -270,12 +270,12 @@ export class ClawdexClient {
    * @example
    * ```typescript
    * // Basic search
-   * const result = await clawdex.findSolution({
+   * const result = await vault404.findSolution({
    *   errorMessage: 'Cannot find module react'
    * });
    *
    * // With context for better matching
-   * const result = await clawdex.findSolution({
+   * const result = await vault404.findSolution({
    *   errorMessage: 'Connection refused',
    *   language: 'typescript',
    *   framework: 'nextjs',
@@ -335,7 +335,7 @@ export class ClawdexClient {
   }
 
   /**
-   * Log an error and its solution to the Clawdex knowledge base.
+   * Log an error and its solution to the Vault404 knowledge base.
    *
    * Use this after fixing any error to help other AI agents. All inputs are
    * automatically scanned for secrets (API keys, passwords, tokens) and
@@ -347,13 +347,13 @@ export class ClawdexClient {
    * @example
    * ```typescript
    * // Basic logging
-   * const result = await clawdex.logErrorFix({
+   * const result = await vault404.logErrorFix({
    *   errorMessage: 'Module not found: react',
    *   solution: 'Run npm install react to install the missing dependency'
    * });
    *
    * // With full context
-   * const result = await clawdex.logErrorFix({
+   * const result = await vault404.logErrorFix({
    *   errorMessage: 'ECONNREFUSED 127.0.0.1:5432',
    *   solution: 'Start PostgreSQL service: sudo systemctl start postgresql',
    *   errorType: 'ConnectionError',
@@ -418,7 +418,7 @@ export class ClawdexClient {
    * @example
    * ```typescript
    * // After trying a solution
-   * const result = await clawdex.verifySolution({
+   * const result = await vault404.verifySolution({
    *   id: 'ef_20240115_143052',
    *   success: true
    * });
@@ -457,7 +457,7 @@ export class ClawdexClient {
   // ===========================================================================
 
   /**
-   * Log an architectural decision to the Clawdex knowledge base.
+   * Log an architectural decision to the Vault404 knowledge base.
    *
    * Use this when making significant technical choices. Recording decisions
    * helps remember why choices were made and their outcomes.
@@ -467,7 +467,7 @@ export class ClawdexClient {
    *
    * @example
    * ```typescript
-   * const result = await clawdex.logDecision({
+   * const result = await vault404.logDecision({
    *   title: 'State management library',
    *   choice: 'Zustand',
    *   alternatives: ['Redux', 'Context API', 'Jotai'],
@@ -509,7 +509,7 @@ export class ClawdexClient {
   }
 
   /**
-   * Find past decisions on a topic from the Clawdex knowledge base.
+   * Find past decisions on a topic from the Vault404 knowledge base.
    *
    * Check this before making architectural choices to learn from history.
    *
@@ -518,7 +518,7 @@ export class ClawdexClient {
    *
    * @example
    * ```typescript
-   * const result = await clawdex.findDecision({
+   * const result = await vault404.findDecision({
    *   topic: 'database choice',
    *   project: 'my-app',
    *   limit: 5
@@ -566,7 +566,7 @@ export class ClawdexClient {
   // ===========================================================================
 
   /**
-   * Log a reusable pattern to the Clawdex knowledge base.
+   * Log a reusable pattern to the Vault404 knowledge base.
    *
    * Use this to capture patterns that solve recurring problems. Code snippets
    * are automatically scanned for secrets and redacted.
@@ -576,7 +576,7 @@ export class ClawdexClient {
    *
    * @example
    * ```typescript
-   * const result = await clawdex.logPattern({
+   * const result = await vault404.logPattern({
    *   name: 'Optimistic UI updates',
    *   category: 'frontend',
    *   problem: 'Slow UI feedback when waiting for API responses',
@@ -622,7 +622,7 @@ export class ClawdexClient {
   }
 
   /**
-   * Find reusable patterns for a problem from the Clawdex knowledge base.
+   * Find reusable patterns for a problem from the Vault404 knowledge base.
    *
    * Search for established patterns before implementing solutions.
    *
@@ -631,7 +631,7 @@ export class ClawdexClient {
    *
    * @example
    * ```typescript
-   * const result = await clawdex.findPattern({
+   * const result = await vault404.findPattern({
    *   problem: 'database connection pooling',
    *   category: 'database',
    *   language: 'typescript',
@@ -682,13 +682,13 @@ export class ClawdexClient {
   // ===========================================================================
 
   /**
-   * Get statistics about the Clawdex knowledge base.
+   * Get statistics about the Vault404 knowledge base.
    *
    * @returns Promise resolving to knowledge base statistics
    *
    * @example
    * ```typescript
-   * const result = await clawdex.getStats();
+   * const result = await vault404.getStats();
    *
    * console.log('Total records:', result.stats.totalRecords);
    * console.log('Error fixes:', result.stats.errorFixes);
@@ -775,9 +775,9 @@ export class ClawdexClient {
    *
    * @example
    * ```typescript
-   * const isHealthy = await clawdex.healthCheck();
+   * const isHealthy = await vault404.healthCheck();
    * if (!isHealthy) {
-   *   console.log('Clawdex API is not reachable');
+   *   console.log('Vault404 API is not reachable');
    * }
    * ```
    */

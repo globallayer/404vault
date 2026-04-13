@@ -1,17 +1,17 @@
 /**
- * Clawdex TypeScript SDK - Custom Error Classes
+ * Vault404 TypeScript SDK - Custom Error Classes
  *
  * Provides specific error types for different failure scenarios.
- * All errors extend ClawdexError for easy catching.
+ * All errors extend Vault404Error for easy catching.
  *
- * @module clawdex/errors
+ * @module vault404/errors
  */
 
 /**
- * Base error class for all Clawdex SDK errors.
+ * Base error class for all Vault404 SDK errors.
  * Extends the native Error class with additional context.
  */
-export class ClawdexError extends Error {
+export class Vault404Error extends Error {
   /**
    * The original error that caused this error, if any
    */
@@ -27,7 +27,7 @@ export class ClawdexError extends Error {
     options?: { cause?: Error; context?: Record<string, unknown> }
   ) {
     super(message);
-    this.name = "ClawdexError";
+    this.name = "Vault404Error";
     this.cause = options?.cause;
     this.context = options?.context;
 
@@ -57,7 +57,7 @@ export class ClawdexError extends Error {
  * @example
  * ```typescript
  * try {
- *   await clawdex.findSolution({ errorMessage: "..." });
+ *   await vault404.findSolution({ errorMessage: "..." });
  * } catch (error) {
  *   if (error instanceof NetworkError) {
  *     console.log("Network issue:", error.message);
@@ -66,7 +66,7 @@ export class ClawdexError extends Error {
  * }
  * ```
  */
-export class NetworkError extends ClawdexError {
+export class NetworkError extends Vault404Error {
   /**
    * The HTTP status code, if available
    */
@@ -107,7 +107,7 @@ export class NetworkError extends ClawdexError {
  * @example
  * ```typescript
  * try {
- *   await clawdex.logErrorFix({ errorMessage: "", solution: "" });
+ *   await vault404.logErrorFix({ errorMessage: "", solution: "" });
  * } catch (error) {
  *   if (error instanceof ApiError) {
  *     console.log("API error:", error.statusCode, error.body);
@@ -115,7 +115,7 @@ export class NetworkError extends ClawdexError {
  * }
  * ```
  */
-export class ApiError extends ClawdexError {
+export class ApiError extends Vault404Error {
   /**
    * The HTTP status code
    */
@@ -198,7 +198,7 @@ export class ApiError extends ClawdexError {
  * @example
  * ```typescript
  * try {
- *   await clawdex.findSolution({ errorMessage: "...", limit: 100 });
+ *   await vault404.findSolution({ errorMessage: "...", limit: 100 });
  * } catch (error) {
  *   if (error instanceof TimeoutError) {
  *     console.log("Request timed out after", error.timeout, "ms");
@@ -206,7 +206,7 @@ export class ApiError extends ClawdexError {
  * }
  * ```
  */
-export class TimeoutError extends ClawdexError {
+export class TimeoutError extends Vault404Error {
   /**
    * The timeout duration in milliseconds
    */
@@ -247,7 +247,7 @@ export class TimeoutError extends ClawdexError {
  * @example
  * ```typescript
  * try {
- *   await clawdex.logErrorFix({ errorMessage: "", solution: "" });
+ *   await vault404.logErrorFix({ errorMessage: "", solution: "" });
  * } catch (error) {
  *   if (error instanceof ValidationError) {
  *     console.log("Invalid input:", error.field, error.message);
@@ -255,7 +255,7 @@ export class TimeoutError extends ClawdexError {
  * }
  * ```
  */
-export class ValidationError extends ClawdexError {
+export class ValidationError extends Vault404Error {
   /**
    * The field that failed validation
    */
@@ -304,7 +304,7 @@ export class ValidationError extends ClawdexError {
  * @example
  * ```typescript
  * try {
- *   await clawdex.findSolution({ errorMessage: "..." });
+ *   await vault404.findSolution({ errorMessage: "..." });
  * } catch (error) {
  *   if (error instanceof AuthenticationError) {
  *     console.log("Invalid API key");
@@ -312,7 +312,7 @@ export class ValidationError extends ClawdexError {
  * }
  * ```
  */
-export class AuthenticationError extends ClawdexError {
+export class AuthenticationError extends Vault404Error {
   constructor(
     message: string = "Authentication failed",
     options?: { cause?: Error; context?: Record<string, unknown> }
@@ -328,7 +328,7 @@ export class AuthenticationError extends ClawdexError {
  * @example
  * ```typescript
  * try {
- *   await clawdex.findSolution({ errorMessage: "..." });
+ *   await vault404.findSolution({ errorMessage: "..." });
  * } catch (error) {
  *   if (error instanceof RateLimitError) {
  *     console.log("Rate limited. Retry after:", error.retryAfter, "seconds");
@@ -336,7 +336,7 @@ export class AuthenticationError extends ClawdexError {
  * }
  * ```
  */
-export class RateLimitError extends ClawdexError {
+export class RateLimitError extends Vault404Error {
   /**
    * Number of seconds to wait before retrying
    */
@@ -385,7 +385,7 @@ export class RateLimitError extends ClawdexError {
  * @example
  * ```typescript
  * try {
- *   await clawdex.verifySolution({ id: "invalid-id", success: true });
+ *   await vault404.verifySolution({ id: "invalid-id", success: true });
  * } catch (error) {
  *   if (error instanceof NotFoundError) {
  *     console.log("Record not found:", error.resourceId);
@@ -393,7 +393,7 @@ export class RateLimitError extends ClawdexError {
  * }
  * ```
  */
-export class NotFoundError extends ClawdexError {
+export class NotFoundError extends Vault404Error {
   /**
    * The type of resource that wasn't found
    */

@@ -1,10 +1,10 @@
 /**
- * Clawdex TypeScript SDK - Type Definitions
+ * Vault404 TypeScript SDK - Type Definitions
  *
- * Complete type definitions for the Clawdex collective AI coding agent brain.
+ * Complete type definitions for the Vault404 collective AI coding agent brain.
  * All types are exported for use in consuming applications.
  *
- * @module clawdex/types
+ * @module vault404/types
  */
 
 // =============================================================================
@@ -12,12 +12,12 @@
 // =============================================================================
 
 /**
- * Configuration options for the ClawdexClient
+ * Configuration options for the Vault404Client
  */
-export interface ClawdexClientOptions {
+export interface Vault404ClientOptions {
   /**
-   * Base URL of the Clawdex API server
-   * @default "https://api.clawdex.dev"
+   * Base URL of the Vault404 API server
+   * @default "https://api.vault404.dev"
    * @example "http://localhost:8000"
    */
   apiUrl?: string;
@@ -288,7 +288,7 @@ export interface FindSolutionOptions {
 }
 
 /**
- * A solution found in the Clawdex knowledge base
+ * A solution found in the Vault404 knowledge base
  */
 export interface Solution {
   /**
@@ -439,7 +439,7 @@ export interface FindDecisionOptions {
 }
 
 /**
- * A decision found in the Clawdex knowledge base
+ * A decision found in the Vault404 knowledge base
  */
 export interface Decision {
   /**
@@ -590,7 +590,7 @@ export interface FindPatternOptions {
 }
 
 /**
- * A pattern found in the Clawdex knowledge base
+ * A pattern found in the Vault404 knowledge base
  */
 export interface Pattern {
   /**
@@ -708,9 +708,9 @@ export interface VerifySolutionResult {
 // =============================================================================
 
 /**
- * Statistics about the Clawdex knowledge base
+ * Statistics about the Vault404 knowledge base
  */
-export interface ClawdexStats {
+export interface Vault404Stats {
   /**
    * Total number of records in the knowledge base
    */
@@ -783,7 +783,7 @@ export interface StatsResult {
   /**
    * The statistics
    */
-  stats: ClawdexStats;
+  stats: Vault404Stats;
 }
 
 // =============================================================================

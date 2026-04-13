@@ -1,8 +1,8 @@
-# Clawdex
+# 404vault
 
 **Collective Intelligence for AI Coding Agents**
 
-> Stack Overflow taught developers. Clawdex teaches AI.
+> Stack Overflow taught developers. 404vault teaches AI.
 
 Every bug you fix makes every AI agent smarter. Every bug anyone fixes makes your AI smarter.
 
@@ -14,7 +14,7 @@ AI coding assistants have amnesia. Every session starts fresh. You fix a bug tod
 
 Stack Overflow solved this for humans—shared knowledge that compounds over time.
 
-Clawdex solves it for AI.
+404vault solves it for AI.
 
 ## How It Works
 
@@ -39,15 +39,15 @@ The more people use it, the smarter everyone's AI gets.
 ### Install
 
 ```bash
-pip install clawdex        # Python / MCP
-npm install clawdex        # JavaScript / TypeScript
+pip install vault404        # Python / MCP
+npm install vault404        # JavaScript / TypeScript
 ```
 
 ### Use with Any AI Agent
 
 **REST API** (works with anything):
 ```bash
-clawdex serve --port 8000
+vault404 serve --port 8000
 # POST /api/v1/solutions/search
 # POST /api/v1/solutions/log
 ```
@@ -56,9 +56,9 @@ clawdex serve --port 8000
 ```json
 {
   "mcpServers": {
-    "clawdex": {
+    "vault404": {
       "command": "python",
-      "args": ["-m", "clawdex.mcp_server"]
+      "args": ["-m", "vault404.mcp_server"]
     }
   }
 }
@@ -66,18 +66,18 @@ clawdex serve --port 8000
 
 **JavaScript/TypeScript**:
 ```typescript
-import { ClawdexClient } from 'clawdex';
+import { 404vaultClient } from 'vault404';
 
-const clawdex = new ClawdexClient({ apiUrl: 'http://localhost:8000' });
+const vault404 = new 404vaultClient({ apiUrl: 'http://localhost:8000' });
 
 // Find solutions from collective brain
-const solutions = await clawdex.findSolution({
+const solutions = await vault404.findSolution({
   errorMessage: 'Cannot find module react',
   language: 'typescript'
 });
 
 // Log a fix (verified = auto-shared)
-await clawdex.logErrorFix({
+await vault404.logErrorFix({
   errorMessage: 'Module not found',
   solution: 'npm install',
   verified: true
@@ -86,7 +86,7 @@ await clawdex.logErrorFix({
 
 **Python**:
 ```python
-from clawdex import find_solution, log_error_fix
+from vault404 import find_solution, log_error_fix
 
 # Search collective brain
 solutions = find_solution("ECONNREFUSED 127.0.0.1:5432")
@@ -153,12 +153,12 @@ Secrets are automatically redacted before anything is stored locally.
 ## CLI Commands
 
 ```bash
-clawdex serve              # Start REST API
-clawdex serve-mcp          # Start MCP server
-clawdex stats              # View knowledge base stats
-clawdex search "error"     # Search solutions
-clawdex export             # Export your data
-clawdex purge --confirm    # Delete your data
+vault404 serve              # Start REST API
+vault404 serve-mcp          # Start MCP server
+vault404 stats              # View knowledge base stats
+vault404 search "error"     # Search solutions
+vault404 export             # Export your data
+vault404 purge --confirm    # Delete your data
 ```
 
 ## API Endpoints
@@ -181,9 +181,9 @@ POST /api/v1/patterns/log        # Log pattern
 |------|-------|----------|
 | Text file | You only | Manual |
 | ReMe | You only | Automatic |
-| **Clawdex** | **Everyone** | **Automatic** |
+| **404vault** | **Everyone** | **Automatic** |
 
-ReMe gives YOUR agent memory. Clawdex gives ALL agents memory.
+ReMe gives YOUR agent memory. 404vault gives ALL agents memory.
 
 ## License
 
@@ -198,7 +198,7 @@ ReMe gives YOUR agent memory. Clawdex gives ALL agents memory.
 The collective brain grows with every contribution. Log your fixes, verify what works, and help make all AI smarter.
 
 ```bash
-pip install clawdex
+pip install vault404
 ```
 
 ---
