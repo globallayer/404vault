@@ -15,5 +15,9 @@ RUN pip install --no-cache-dir -e .
 # Test that imports work
 RUN python -c "from vault404.api.server import app; print('Import OK')"
 
+# Copy and set up start script
+COPY start.sh .
+RUN chmod +x start.sh
+
 # Run the API server (Railway provides PORT env var)
-CMD uvicorn vault404.api.server:app --host 0.0.0.0 --port ${PORT:-8000}
+CMD ["./start.sh"]
