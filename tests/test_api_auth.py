@@ -24,6 +24,7 @@ def temp_vault_dir():
 
     # Patch the API_KEYS_FILE to use temp directory
     import vault404.api.auth as auth_module
+
     auth_module.API_KEYS_FILE = Path(temp_dir) / "api_keys.json"
 
     yield temp_dir

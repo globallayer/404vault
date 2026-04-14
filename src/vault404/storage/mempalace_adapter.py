@@ -155,14 +155,16 @@ class MempalaceAdapter:
                 ctx_score = self._context_match_score(context, parsed["context"])
                 score = (score + ctx_score) / 2
 
-            ranked.append({
-                "solution": parsed.get("solution", ""),
-                "error": parsed.get("error", ""),
-                "context": parsed.get("context", {}),
-                "score": score,
-                "verified": parsed.get("verified", False),
-                "source": result,
-            })
+            ranked.append(
+                {
+                    "solution": parsed.get("solution", ""),
+                    "error": parsed.get("error", ""),
+                    "context": parsed.get("context", {}),
+                    "score": score,
+                    "verified": parsed.get("verified", False),
+                    "source": result,
+                }
+            )
 
         # Sort by score and return top results
         ranked.sort(key=lambda x: x["score"], reverse=True)

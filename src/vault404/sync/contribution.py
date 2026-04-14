@@ -41,7 +41,7 @@ class ContributionManager:
         """Load set of already-contributed record IDs."""
         if self.contributed_path.exists():
             try:
-                data = json.loads(self.contributed_path.read_text(encoding='utf-8'))
+                data = json.loads(self.contributed_path.read_text(encoding="utf-8"))
                 return set(data.get("ids", []))
             except (json.JSONDecodeError, IOError):
                 pass
@@ -50,8 +50,7 @@ class ContributionManager:
     def _save_contributed(self) -> None:
         """Save the set of contributed record IDs."""
         self.contributed_path.write_text(
-            json.dumps({"ids": list(self._contributed)}, indent=2),
-            encoding='utf-8'
+            json.dumps({"ids": list(self._contributed)}, indent=2), encoding="utf-8"
         )
 
     async def prepare_contribution(self, record: dict) -> dict:
@@ -105,8 +104,7 @@ class ContributionManager:
 
         filepath = self.contributions_dir / filename
         filepath.write_text(
-            json.dumps(contribution, indent=2, ensure_ascii=False),
-            encoding='utf-8'
+            json.dumps(contribution, indent=2, ensure_ascii=False), encoding="utf-8"
         )
 
         # Track as contributed
@@ -135,7 +133,7 @@ class ContributionManager:
             if filepath.name == "contributed.json":
                 continue
             try:
-                data = json.loads(filepath.read_text(encoding='utf-8'))
+                data = json.loads(filepath.read_text(encoding="utf-8"))
                 contributions.append(data)
             except (json.JSONDecodeError, IOError):
                 pass
@@ -158,7 +156,7 @@ class ContributionManager:
             "contributions": contributions,
         }
 
-        with open(output_path, 'w', encoding='utf-8') as f:
+        with open(output_path, "w", encoding="utf-8") as f:
             json.dump(export, f, indent=2, ensure_ascii=False)
 
         return {

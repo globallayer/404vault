@@ -13,6 +13,7 @@ from dataclasses import dataclass
 @dataclass
 class RedactionResult:
     """Result of redaction operation"""
+
     original_length: int
     redacted_length: int
     redactions_made: int
@@ -32,98 +33,58 @@ class SecretRedactor:
         # API Keys - Generic
         "api_key": (
             r'(?i)(api[_-]?key|apikey)["\s:=]+["\']?([\w-]{20,})["\']?',
-            r'\1=[REDACTED:api_key]'
+            r"\1=[REDACTED:api_key]",
         ),
-
         # Passwords
         "password": (
             r'(?i)(password|passwd|pwd|secret)["\s:=]+["\']?([^\s"\']{4,})["\']?',
-            r'\1=[REDACTED:password]'
+            r"\1=[REDACTED:password]",
         ),
-
         # Generic tokens
         "token": (
             r'(?i)(token|auth[_-]?token|access[_-]?token|bearer)["\s:=]+["\']?([\w-]{20,})["\']?',
-            r'\1=[REDACTED:token]'
+            r"\1=[REDACTED:token]",
         ),
-
         # OpenAI
-        "openai_key": (
-            r'sk-[a-zA-Z0-9]{48,}',
-            '[REDACTED:openai_key]'
-        ),
-
+        "openai_key": (r"sk-[a-zA-Z0-9]{48,}", "[REDACTED:openai_key]"),
         # Anthropic
-        "anthropic_key": (
-            r'sk-ant-[a-zA-Z0-9-]{80,}',
-            '[REDACTED:anthropic_key]'
-        ),
-
+        "anthropic_key": (r"sk-ant-[a-zA-Z0-9-]{80,}", "[REDACTED:anthropic_key]"),
         # Stripe
-        "stripe_key": (
-            r'(sk|pk|rk)_(live|test)_[a-zA-Z0-9]{24,}',
-            '[REDACTED:stripe_key]'
-        ),
-
+        "stripe_key": (r"(sk|pk|rk)_(live|test)_[a-zA-Z0-9]{24,}", "[REDACTED:stripe_key]"),
         # GitHub
-        "github_token": (
-            r'(ghp|gho|ghu|ghs|ghr)_[a-zA-Z0-9]{36,}',
-            '[REDACTED:github_token]'
-        ),
-
+        "github_token": (r"(ghp|gho|ghu|ghs|ghr)_[a-zA-Z0-9]{36,}", "[REDACTED:github_token]"),
         # AWS
-        "aws_key": (
-            r'AKIA[0-9A-Z]{16}',
-            '[REDACTED:aws_access_key]'
-        ),
+        "aws_key": (r"AKIA[0-9A-Z]{16}", "[REDACTED:aws_access_key]"),
         "aws_secret": (
             r'(?i)(aws[_-]?secret[_-]?access[_-]?key)["\s:=]+["\']?([a-zA-Z0-9/+=]{40})["\']?',
-            r'\1=[REDACTED:aws_secret]'
+            r"\1=[REDACTED:aws_secret]",
         ),
-
         # Database URLs (redact credentials portion)
-        "postgres_url": (
-            r'postgresql://([^:]+):([^@]+)@',
-            r'postgresql://[REDACTED]:[REDACTED]@'
-        ),
-        "mysql_url": (
-            r'mysql://([^:]+):([^@]+)@',
-            r'mysql://[REDACTED]:[REDACTED]@'
-        ),
+        "postgres_url": (r"postgresql://([^:]+):([^@]+)@", r"postgresql://[REDACTED]:[REDACTED]@"),
+        "mysql_url": (r"mysql://([^:]+):([^@]+)@", r"mysql://[REDACTED]:[REDACTED]@"),
         "mongodb_url": (
-            r'mongodb(\+srv)?://([^:]+):([^@]+)@',
-            r'mongodb\1://[REDACTED]:[REDACTED]@'
+            r"mongodb(\+srv)?://([^:]+):([^@]+)@",
+            r"mongodb\1://[REDACTED]:[REDACTED]@",
         ),
-
         # Supabase
         "supabase_key": (
-            r'eyJ[a-zA-Z0-9_-]{100,}\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+',
-            '[REDACTED:jwt_token]'
+            r"eyJ[a-zA-Z0-9_-]{100,}\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+",
+            "[REDACTED:jwt_token]",
         ),
-
         # Private keys
         "private_key": (
-            r'-----BEGIN (RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----[\s\S]*?-----END (RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----',
-            '[REDACTED:private_key]'
+            r"-----BEGIN (RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----[\s\S]*?-----END (RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----",
+            "[REDACTED:private_key]",
         ),
-
         # Generic secrets in env format
         "env_secret": (
             r'(?i)^([A-Z_]*(?:SECRET|KEY|TOKEN|PASSWORD|CREDENTIAL|AUTH)[A-Z_]*)\s*=\s*["\']?([^\s"\']{8,})["\']?',
-            r'\1=[REDACTED:env_secret]'
+            r"\1=[REDACTED:env_secret]",
         ),
-
         # Bearer tokens in headers
-        "bearer_token": (
-            r'(?i)bearer\s+([a-zA-Z0-9._-]{20,})',
-            'Bearer [REDACTED:bearer_token]'
-        ),
-
+        "bearer_token": (r"(?i)bearer\s+([a-zA-Z0-9._-]{20,})", "Bearer [REDACTED:bearer_token]"),
         # Basic auth in URLs
-        "basic_auth": (
-            r'https?://([^:]+):([^@]+)@',
-            r'https://[REDACTED]:[REDACTED]@'
-        ),
+        "basic_auth": (r"https?://([^:]+):([^@]+)@", r"https://[REDACTED]:[REDACTED]@"),
     }
 
     def __init__(self, extra_patterns: Optional[dict] = None):
@@ -139,8 +100,7 @@ class SecretRedactor:
 
         # Compile patterns for efficiency
         self._compiled = {
-            name: re.compile(pattern, re.MULTILINE)
-            for name, (pattern, _) in self.patterns.items()
+            name: re.compile(pattern, re.MULTILINE) for name, (pattern, _) in self.patterns.items()
         }
 
     def redact(self, text: str) -> RedactionResult:

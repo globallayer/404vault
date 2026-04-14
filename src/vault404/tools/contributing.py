@@ -60,7 +60,8 @@ async def prepare_contribution(record_id: str) -> dict:
         }
 
     import json
-    record = json.loads(filepath.read_text(encoding='utf-8'))
+
+    record = json.loads(filepath.read_text(encoding="utf-8"))
 
     # Check if verified
     if not record.get("verified"):
@@ -106,7 +107,8 @@ async def confirm_contribution(record_id: str) -> dict:
         }
 
     import json
-    record = json.loads(filepath.read_text(encoding='utf-8'))
+
+    record = json.loads(filepath.read_text(encoding="utf-8"))
     anon = anonymize_record(record)
 
     # Save contribution

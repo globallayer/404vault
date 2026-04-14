@@ -191,7 +191,7 @@ def find_most_similar(
     query_embedding: list[float],
     candidate_embeddings: list[tuple[str, list[float]]],
     top_k: int = 10,
-    threshold: float = 0.3
+    threshold: float = 0.3,
 ) -> list[tuple[str, float]]:
     """
     Find most similar items from candidates.

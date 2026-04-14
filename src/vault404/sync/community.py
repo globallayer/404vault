@@ -19,10 +19,12 @@ from typing import Optional, List, Dict
 # Try to import httpx for async HTTP (preferred), fallback to requests
 try:
     import httpx
+
     HTTP_CLIENT = "httpx"
 except ImportError:
     try:
         import requests  # noqa: F401 - used conditionally when HTTP_CLIENT == "requests"
+
         HTTP_CLIENT = "requests"
     except ImportError:
         HTTP_CLIENT = None
@@ -39,6 +41,7 @@ API_KEY = os.environ.get("VAULT404_API_KEY", DEFAULT_ANON_KEY)
 
 class CommunityBrainError(Exception):
     """Raised when community brain operations fail."""
+
     pass
 
 
@@ -59,9 +62,7 @@ class CommunityBrain:
         self._client = None
 
         if not HTTP_CLIENT:
-            raise CommunityBrainError(
-                "No HTTP client available. Install httpx: pip install httpx"
-            )
+            raise CommunityBrainError("No HTTP client available. Install httpx: pip install httpx")
 
     def _get_headers(self) -> Dict[str, str]:
         """Get headers for API requests."""
@@ -125,6 +126,7 @@ class CommunityBrain:
             else:
                 # Sync fallback
                 import requests
+
                 response = requests.post(
                     f"{self.api_url}/community_solutions",
                     headers=self._get_headers(),
@@ -194,6 +196,7 @@ class CommunityBrain:
                     results = response.json()
             else:
                 import requests
+
                 response = requests.get(
                     f"{self.api_url}/community_solutions",
                     headers=self._get_headers(),
@@ -253,6 +256,7 @@ class CommunityBrain:
                     return response.json()
             else:
                 import requests
+
                 response = requests.get(
                     f"{self.api_url}/community_solutions",
                     headers=self._get_headers(),
@@ -294,6 +298,7 @@ class CommunityBrain:
                     return response.json()
             else:
                 import requests
+
                 response = requests.get(
                     f"{self.api_url}/community_solutions",
                     headers=self._get_headers(),
@@ -401,7 +406,7 @@ async def federated_search(
     # Local results first (higher trust)
     for r in local_results:
         hash_key = f"{r.get('error', '')[:50]}-{r.get('solution', '')[:50]}"
-        content_hash = hashlib.md5(hash_key.encode()).hexdigest()
+        content_hash = hashlib.md5(hash_key.encode(), usedforsecurity=False).hexdigest()
 
         if content_hash not in seen_hashes:
             seen_hashes.add(content_hash)
@@ -412,7 +417,7 @@ async def federated_search(
     # Community results (lower trust)
     for r in community_results:
         hash_key = f"{r.get('error', '')[:50]}-{r.get('solution', '')[:50]}"
-        content_hash = hashlib.md5(hash_key.encode()).hexdigest()
+        content_hash = hashlib.md5(hash_key.encode(), usedforsecurity=False).hexdigest()
 
         if content_hash not in seen_hashes:
             seen_hashes.add(content_hash)

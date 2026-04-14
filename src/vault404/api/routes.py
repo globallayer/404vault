@@ -52,7 +52,9 @@ COMMUNITY_ENABLED = os.environ.get("VAULT404_COMMUNITY", "").lower() in ("true",
 # Rate limit settings (requests per minute)
 SEARCH_RATE_LIMIT = os.environ.get("VAULT404_SEARCH_RATE_LIMIT", "60/minute")
 WRITE_RATE_LIMIT = os.environ.get("VAULT404_WRITE_RATE_LIMIT", "20/minute")
-AUTH_RATE_LIMIT = os.environ.get("VAULT404_AUTH_RATE_LIMIT", "120/minute")  # Higher for authenticated
+AUTH_RATE_LIMIT = os.environ.get(
+    "VAULT404_AUTH_RATE_LIMIT", "120/minute"
+)  # Higher for authenticated
 
 # Create routers
 solutions_router = APIRouter(prefix="/solutions", tags=["solutions"])
@@ -78,6 +80,7 @@ def get_rate_limiter():
     try:
         from slowapi import Limiter
         from slowapi.util import get_remote_address
+
         return Limiter(key_func=get_remote_address)
     except ImportError:
         return None
@@ -106,8 +109,9 @@ async def search_solutions(
 
     # Build context from request
     context = None
-    if any([request.language, request.framework, request.database,
-            request.platform, request.category]):
+    if any(
+        [request.language, request.framework, request.database, request.platform, request.category]
+    ):
         context = Context(
             language=request.language,
             framework=request.framework,
@@ -130,12 +134,16 @@ async def search_solutions(
 
     if COMMUNITY_ENABLED:
         try:
-            context_dict = {
-                "language": request.language,
-                "framework": request.framework,
-                "database": request.database,
-                "platform": request.platform,
-            } if context else None
+            context_dict = (
+                {
+                    "language": request.language,
+                    "framework": request.framework,
+                    "database": request.database,
+                    "platform": request.platform,
+                }
+                if context
+                else None
+            )
 
             all_results = await federated_search(
                 request.error_message,
@@ -237,8 +245,7 @@ async def log_solution(
     result = await storage.store_error_fix(record)
 
     secrets_redacted = (
-        safe_error_message != request.error_message or
-        safe_solution != request.solution
+        safe_error_message != request.error_message or safe_solution != request.solution
     )
 
     return SolutionLogResponse(
@@ -271,15 +278,18 @@ async def verify_solution(
     await storage.verify_solution(request.id, request.success)
 
     contributed = False
-    message = f"Marked solution {request.id} as {'successful' if request.success else 'unsuccessful'}"
+    message = (
+        f"Marked solution {request.id} as {'successful' if request.success else 'unsuccessful'}"
+    )
 
     # Auto-contribute if successful
     if request.success:
         import json
+
         filepath = storage.errors_dir / f"{request.id}.json"
         if filepath.exists():
             try:
-                record = json.loads(filepath.read_text(encoding='utf-8'))
+                record = json.loads(filepath.read_text(encoding="utf-8"))
                 anon = anonymize_record(record)
                 contrib_result = await contrib.confirm_contribution(request.id, anon)
 

@@ -82,7 +82,7 @@ def success_rate_factor(success_count: int, failure_count: int) -> float:
         - Ten successes (10, 0): ~0.92
     """
     alpha = 1  # pseudo-successes (prior)
-    beta = 1   # pseudo-failures (prior)
+    beta = 1  # pseudo-failures (prior)
 
     smoothed_rate = (success_count + alpha) / (success_count + failure_count + alpha + beta)
     return smoothed_rate
@@ -154,12 +154,12 @@ def calculate_score(
 
     # Weighted sum
     score = (
-        text_similarity * w["text_similarity"] +
-        context_match * w["context_match"] +
-        temporal_factor * w["temporal"] +
-        verification_factor * w["verification"] +
-        success_factor * w["success_rate"] +
-        popularity_factor * w["popularity"]
+        text_similarity * w["text_similarity"]
+        + context_match * w["context_match"]
+        + temporal_factor * w["temporal"]
+        + verification_factor * w["verification"]
+        + success_factor * w["success_rate"]
+        + popularity_factor * w["popularity"]
     )
 
     return min(score, 1.0)

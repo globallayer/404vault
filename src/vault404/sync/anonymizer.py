@@ -80,55 +80,35 @@ def _anonymize_text(text: str) -> str:
 
     # Replace absolute paths with relative patterns
     # Windows: C:\Users\john\projects\... → [project]/...
-    result = re.sub(
-        r'[A-Z]:\\[^\\]+\\[^\\]+\\[^\\]+\\([^\\]+\\)',
-        r'[project]/',
-        result
-    )
+    result = re.sub(r"[A-Z]:\\[^\\]+\\[^\\]+\\[^\\]+\\([^\\]+\\)", r"[project]/", result)
 
     # Unix: /Users/john/projects/... → [project]/...
-    result = re.sub(
-        r'/(?:Users|home)/[^/]+/[^/]+/([^/]+/)',
-        r'[project]/',
-        result
-    )
+    result = re.sub(r"/(?:Users|home)/[^/]+/[^/]+/([^/]+/)", r"[project]/", result)
 
     # Replace specific IPs with [IP]
-    result = re.sub(
-        r'\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b',
-        '[IP]',
-        result
-    )
+    result = re.sub(r"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b", "[IP]", result)
 
     # Replace specific ports with [PORT] (keep common ones)
-    common_ports = {'80', '443', '3000', '5432', '3306', '27017', '6379', '8080'}
+    common_ports = {"80", "443", "3000", "5432", "3306", "27017", "6379", "8080"}
     result = re.sub(
-        r':(\d{4,5})\b',
-        lambda m: f':{m.group(1)}' if m.group(1) in common_ports else ':[PORT]',
-        result
+        r":(\d{4,5})\b",
+        lambda m: f":{m.group(1)}" if m.group(1) in common_ports else ":[PORT]",
+        result,
     )
 
     # Replace UUIDs with [UUID]
     result = re.sub(
-        r'[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',
-        '[UUID]',
+        r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
+        "[UUID]",
         result,
-        flags=re.IGNORECASE
+        flags=re.IGNORECASE,
     )
 
     # Replace email-like patterns with [EMAIL]
-    result = re.sub(
-        r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}',
-        '[EMAIL]',
-        result
-    )
+    result = re.sub(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}", "[EMAIL]", result)
 
     # Replace URLs with domain only
-    result = re.sub(
-        r'https?://([^/\s]+)[^\s]*',
-        r'https://[DOMAIN]',
-        result
-    )
+    result = re.sub(r"https?://([^/\s]+)[^\s]*", r"https://[DOMAIN]", result)
 
     return result
 
@@ -154,26 +134,26 @@ def _extract_approach(solution: str) -> str:
 
     lower = solution.lower()
 
-    if 'import' in lower:
-        approaches.append('import_fix')
-    if 'type' in lower and ('annotation' in lower or 'hint' in lower):
-        approaches.append('type_annotation')
-    if 'async' in lower or 'await' in lower:
-        approaches.append('async_handling')
-    if 'null' in lower or 'none' in lower or 'undefined' in lower:
-        approaches.append('null_check')
-    if 'try' in lower and ('catch' in lower or 'except' in lower):
-        approaches.append('error_handling')
-    if 'config' in lower or 'env' in lower:
-        approaches.append('configuration')
-    if 'dependency' in lower or 'package' in lower or 'version' in lower:
-        approaches.append('dependency_fix')
-    if 'permission' in lower or 'auth' in lower:
-        approaches.append('auth_fix')
-    if 'query' in lower or 'sql' in lower:
-        approaches.append('query_fix')
+    if "import" in lower:
+        approaches.append("import_fix")
+    if "type" in lower and ("annotation" in lower or "hint" in lower):
+        approaches.append("type_annotation")
+    if "async" in lower or "await" in lower:
+        approaches.append("async_handling")
+    if "null" in lower or "none" in lower or "undefined" in lower:
+        approaches.append("null_check")
+    if "try" in lower and ("catch" in lower or "except" in lower):
+        approaches.append("error_handling")
+    if "config" in lower or "env" in lower:
+        approaches.append("configuration")
+    if "dependency" in lower or "package" in lower or "version" in lower:
+        approaches.append("dependency_fix")
+    if "permission" in lower or "auth" in lower:
+        approaches.append("auth_fix")
+    if "query" in lower or "sql" in lower:
+        approaches.append("query_fix")
 
-    return ','.join(approaches) if approaches else 'general'
+    return ",".join(approaches) if approaches else "general"
 
 
 def _anonymize_code(code: str) -> str:
@@ -191,7 +171,7 @@ def _anonymize_code(code: str) -> str:
     # Keep common patterns (i, j, x, err, ctx, db, etc.)
 
     # Anonymize comments
-    result = re.sub(r'//.*$', '// [comment]', result, flags=re.MULTILINE)
-    result = re.sub(r'#.*$', '# [comment]', result, flags=re.MULTILINE)
+    result = re.sub(r"//.*$", "// [comment]", result, flags=re.MULTILINE)
+    result = re.sub(r"#.*$", "# [comment]", result, flags=re.MULTILINE)
 
     return result

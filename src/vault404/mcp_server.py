@@ -47,7 +47,10 @@ Optional: error_type, stack_trace, file, line, code_change, files_modified,
             "properties": {
                 "error_message": {"type": "string", "description": "The error message encountered"},
                 "solution": {"type": "string", "description": "How the error was fixed"},
-                "error_type": {"type": "string", "description": "Type of error (e.g., ConnectionError)"},
+                "error_type": {
+                    "type": "string",
+                    "description": "Type of error (e.g., ConnectionError)",
+                },
                 "stack_trace": {"type": "string", "description": "Full stack trace"},
                 "file": {"type": "string", "description": "File where error occurred"},
                 "line": {"type": "integer", "description": "Line number"},
@@ -104,7 +107,10 @@ Optional: languages, frameworks, databases, scenarios, before_code, after_code, 
             "type": "object",
             "properties": {
                 "name": {"type": "string", "description": "Pattern name"},
-                "category": {"type": "string", "description": "Category (database, auth, api, etc.)"},
+                "category": {
+                    "type": "string",
+                    "description": "Category (database, auth, api, etc.)",
+                },
                 "problem": {"type": "string", "description": "Problem this solves"},
                 "solution": {"type": "string", "description": "How it solves it"},
                 "languages": {"type": "array", "items": {"type": "string"}},
@@ -131,7 +137,10 @@ Optional: project, language, framework, database, platform, category, limit""",
         inputSchema={
             "type": "object",
             "properties": {
-                "error_message": {"type": "string", "description": "The error to find solutions for"},
+                "error_message": {
+                    "type": "string",
+                    "description": "The error to find solutions for",
+                },
                 "project": {"type": "string"},
                 "language": {"type": "string"},
                 "framework": {"type": "string"},
@@ -195,7 +204,10 @@ Required: record_id, success""",
             "type": "object",
             "properties": {
                 "record_id": {"type": "string", "description": "The record ID"},
-                "success": {"type": "boolean", "description": "Whether it worked - if True, auto-contributes to community"},
+                "success": {
+                    "type": "boolean",
+                    "description": "Whether it worked - if True, auto-contributes to community",
+                },
             },
             "required": ["record_id", "success"],
         },
@@ -216,6 +228,7 @@ Shows total records, entities, and relationship types.""",
 # =============================================================================
 # Tool Handlers
 # =============================================================================
+
 
 @server.list_tools()
 async def list_tools() -> list[Tool]:
@@ -261,6 +274,7 @@ async def call_tool(name: str, arguments: dict[str, Any]) -> list[TextContent]:
 # =============================================================================
 # Main Entry Point
 # =============================================================================
+
 
 def main():
     """Run the MCP server"""

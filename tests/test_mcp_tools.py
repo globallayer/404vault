@@ -33,12 +33,14 @@ def temp_vault_dir():
 
     # Create a new storage with temp directory
     from vault404.storage.local_storage import LocalStorage
+
     storage_module._storage = LocalStorage(data_dir=Path(temp_dir))
 
     # Also reset the contribution manager to use temp directory
     original_contrib = maintenance_module._contrib
     maintenance_module._contrib = None
     from vault404.sync.contribution import ContributionManager
+
     maintenance_module._contrib = ContributionManager(data_dir=Path(temp_dir))
 
     yield temp_dir
@@ -52,6 +54,7 @@ def temp_vault_dir():
 # =============================================================================
 # Recording Tools Tests
 # =============================================================================
+
 
 class TestLogErrorFix:
     """Tests for log_error_fix tool."""
@@ -204,6 +207,7 @@ class TestLogPattern:
 # =============================================================================
 # Querying Tools Tests
 # =============================================================================
+
 
 class TestFindSolution:
     """Tests for find_solution tool."""
@@ -370,6 +374,7 @@ class TestFindPattern:
 # Maintenance Tools Tests
 # =============================================================================
 
+
 class TestVerifySolution:
     """Tests for verify_solution tool."""
 
@@ -491,6 +496,7 @@ class TestExportAll:
     async def test_export_empty(self, temp_vault_dir):
         """Should export even when empty."""
         import tempfile
+
         export_path = tempfile.mktemp(suffix=".json")
 
         try:
@@ -543,6 +549,7 @@ class TestExportAll:
 # =============================================================================
 # Integration Tests
 # =============================================================================
+
 
 class TestMCPToolsIntegration:
     """Integration tests for MCP tools working together."""

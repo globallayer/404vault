@@ -18,7 +18,7 @@ import sys
 
 # Fix Windows console encoding for Unicode
 if sys.platform == "win32":
-    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 from .storage import get_storage, configure_storage, reset_storage
 from .tools.maintenance import get_stats, export_all, purge_all
@@ -32,6 +32,7 @@ def print_json(data: dict) -> None:
 
 def cmd_stats(args: argparse.Namespace) -> int:
     """Show knowledge base statistics."""
+
     async def run():
         result = await get_stats()
         if args.json:
@@ -53,6 +54,7 @@ def cmd_stats(args: argparse.Namespace) -> int:
 
 def cmd_export(args: argparse.Namespace) -> int:
     """Export all data to JSON file."""
+
     async def run():
         result = await export_all(args.output)
         if args.json:
@@ -96,6 +98,7 @@ def cmd_purge(args: argparse.Namespace) -> int:
 
 def cmd_search(args: argparse.Namespace) -> int:
     """Search for solutions, decisions, or patterns."""
+
     async def run():
         query = " ".join(args.query)
 
@@ -107,7 +110,9 @@ def cmd_search(args: argparse.Namespace) -> int:
                 print("\n🔍 Solutions:")
                 if result.get("found"):
                     for s in result.get("solutions", []):
-                        print(f"\n  [{s.get('confidence', 0):.0%}] {s.get('original_error', '')[:60]}")
+                        print(
+                            f"\n  [{s.get('confidence', 0):.0%}] {s.get('original_error', '')[:60]}"
+                        )
                         print(f"       → {s.get('solution', '')[:80]}")
                         if s.get("verified"):
                             print("       ✓ Verified")
@@ -135,7 +140,9 @@ def cmd_search(args: argparse.Namespace) -> int:
                 print("\n📐 Patterns:")
                 if result.get("found"):
                     for p in result.get("patterns", []):
-                        print(f"\n  [{p.get('relevance', 0):.0%}] {p.get('name', '')} ({p.get('category', '')})")
+                        print(
+                            f"\n  [{p.get('relevance', 0):.0%}] {p.get('name', '')} ({p.get('category', '')})"
+                        )
                         print(f"       Problem: {p.get('problem', '')[:60]}")
                         print(f"       Solution: {p.get('solution', '')[:60]}")
                 else:
@@ -163,7 +170,10 @@ def cmd_encrypt(args: argparse.Namespace) -> int:
         password = args.password
     else:
         import getpass
-        password = getpass.getpass("   Enter encryption password (or press Enter for auto-generated): ")
+
+        password = getpass.getpass(
+            "   Enter encryption password (or press Enter for auto-generated): "
+        )
         if not password:
             password = None
             print("   Using auto-generated encryption key.")
@@ -208,6 +218,7 @@ def cmd_serve(args: argparse.Namespace) -> int:
 def cmd_serve_mcp(args: argparse.Namespace) -> int:
     """Start the MCP server."""
     from .mcp_server import main
+
     main()
     return 0
 
@@ -251,7 +262,8 @@ Examples:
     search_parser = subparsers.add_parser("search", help="Search knowledge base")
     search_parser.add_argument("query", nargs="+", help="Search query")
     search_parser.add_argument(
-        "--type", "-t",
+        "--type",
+        "-t",
         choices=["solution", "decision", "pattern", "all"],
         default="all",
         help="Type of record to search",
@@ -267,26 +279,18 @@ Examples:
     # serve (REST API)
     serve_parser = subparsers.add_parser("serve", help="Start REST API server")
     serve_parser.add_argument(
-        "--host", "-H",
-        default="0.0.0.0",
-        help="Host to bind to (default: 0.0.0.0)"
+        "--host",
+        "-H",
+        default="0.0.0.0",  # nosec B104 - intentional for development server
+        help="Host to bind to (default: 0.0.0.0)",
     )
     serve_parser.add_argument(
-        "--port", "-p",
-        type=int,
-        default=8000,
-        help="Port to listen on (default: 8000)"
+        "--port", "-p", type=int, default=8000, help="Port to listen on (default: 8000)"
     )
     serve_parser.add_argument(
-        "--reload", "-r",
-        action="store_true",
-        help="Enable auto-reload for development"
+        "--reload", "-r", action="store_true", help="Enable auto-reload for development"
     )
-    serve_parser.add_argument(
-        "--verbose", "-v",
-        action="store_true",
-        help="Enable verbose logging"
-    )
+    serve_parser.add_argument("--verbose", "-v", action="store_true", help="Enable verbose logging")
     serve_parser.set_defaults(func=cmd_serve)
 
     # serve-mcp (MCP server)

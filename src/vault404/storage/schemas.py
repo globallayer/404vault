@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 
 class Context(BaseModel):
     """Context information for matching solutions"""
+
     project: Optional[str] = None
     language: Optional[str] = None  # typescript, python, go, rust, etc.
     framework: Optional[str] = None  # express, fastapi, nextjs, etc.
@@ -55,6 +56,7 @@ class Context(BaseModel):
 
 class ErrorInfo(BaseModel):
     """Information about an error encountered"""
+
     message: str
     error_type: Optional[str] = None
     stack_trace: Optional[str] = None
@@ -64,6 +66,7 @@ class ErrorInfo(BaseModel):
 
 class SolutionInfo(BaseModel):
     """Information about a solution applied"""
+
     description: str
     code_change: Optional[str] = None
     files_modified: list[str] = Field(default_factory=list)
@@ -72,6 +75,7 @@ class SolutionInfo(BaseModel):
 
 class ErrorFix(BaseModel):
     """A record of an error and its fix"""
+
     id: str = Field(default_factory=lambda: f"ef_{datetime.now().strftime('%Y%m%d_%H%M%S')}")
     type: str = "error_fix"
     timestamp: datetime = Field(default_factory=datetime.now)
@@ -116,6 +120,7 @@ class ErrorFix(BaseModel):
 
 class Decision(BaseModel):
     """A record of an architectural decision"""
+
     id: str = Field(default_factory=lambda: f"dec_{datetime.now().strftime('%Y%m%d_%H%M%S')}")
     type: str = "decision"
     timestamp: datetime = Field(default_factory=datetime.now)
@@ -153,6 +158,7 @@ class Decision(BaseModel):
 
 class Pattern(BaseModel):
     """A reusable pattern extracted from experience"""
+
     id: str = Field(default_factory=lambda: f"pat_{datetime.now().strftime('%Y%m%d_%H%M%S')}")
     type: str = "pattern"
     timestamp: datetime = Field(default_factory=datetime.now)

@@ -111,7 +111,7 @@ class TestEmbeddingAvailability:
 
     def test_semantic_similarity_fallback(self):
         """semantic_similarity should return 0.0 when embeddings unavailable."""
-        with patch.object(embeddings, 'get_embedding', return_value=None):
+        with patch.object(embeddings, "get_embedding", return_value=None):
             sim = embeddings.semantic_similarity("text1", "text2")
             assert sim == 0.0
 
@@ -126,6 +126,7 @@ class TestHybridSearch:
 
         # Store a fix (won't have embedding if sentence-transformers not installed)
         from vault404.storage.schemas import ErrorFix, ErrorInfo, SolutionInfo
+
         fix = ErrorFix(
             error=ErrorInfo(message="Cannot read property 'map' of undefined"),
             solution=SolutionInfo(description="Check if array exists before mapping"),
@@ -143,6 +144,7 @@ class TestHybridSearch:
         storage = storage_module._storage
 
         from vault404.storage.schemas import ErrorFix, ErrorInfo, SolutionInfo
+
         fix = ErrorFix(
             error=ErrorInfo(message="Connection refused"),
             solution=SolutionInfo(description="Start the database service"),
@@ -207,6 +209,7 @@ class TestEmbeddingStorage:
         storage = storage_module._storage
 
         from vault404.storage.schemas import ErrorFix, ErrorInfo, SolutionInfo
+
         fix = ErrorFix(
             error=ErrorInfo(message="Test error"),
             solution=SolutionInfo(description="Test solution"),
@@ -222,6 +225,7 @@ class TestEmbeddingStorage:
         storage = storage_module._storage
 
         from vault404.storage.schemas import Decision
+
         decision = Decision(
             title="Test decision",
             choice="Option A",
@@ -238,6 +242,7 @@ class TestEmbeddingStorage:
         storage = storage_module._storage
 
         from vault404.storage.schemas import Pattern
+
         pattern = Pattern(
             name="Test pattern",
             category="testing",

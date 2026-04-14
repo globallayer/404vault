@@ -11,9 +11,9 @@ from difflib import SequenceMatcher
 
 # Strategy weights for combining results
 STRATEGY_WEIGHTS = {
-    "error_code": 0.40,   # Exact error code match is strongest signal
-    "keyword": 0.35,      # Keyword overlap is next
-    "fuzzy": 0.25,        # Fuzzy matching catches the rest
+    "error_code": 0.40,  # Exact error code match is strongest signal
+    "keyword": 0.35,  # Keyword overlap is next
+    "fuzzy": 0.25,  # Fuzzy matching catches the rest
 }
 
 
@@ -23,40 +23,95 @@ class KeywordStrategy:
     # Common error keywords that indicate the problem type
     ERROR_KEYWORDS = {
         # Connection/Network
-        "connection", "timeout", "refused", "reset", "socket", "network",
-        "econnrefused", "enotfound", "etimedout", "econnreset",
-
+        "connection",
+        "timeout",
+        "refused",
+        "reset",
+        "socket",
+        "network",
+        "econnrefused",
+        "enotfound",
+        "etimedout",
+        "econnreset",
         # Auth/Permissions
-        "denied", "permission", "unauthorized", "forbidden", "auth",
-        "authentication", "authorization", "token", "jwt", "session",
-
+        "denied",
+        "permission",
+        "unauthorized",
+        "forbidden",
+        "auth",
+        "authentication",
+        "authorization",
+        "token",
+        "jwt",
+        "session",
         # Data/Type errors
-        "null", "undefined", "none", "nan", "type", "typeerror",
-        "cannot", "read", "property", "attribute",
-
+        "null",
+        "undefined",
+        "none",
+        "nan",
+        "type",
+        "typeerror",
+        "cannot",
+        "read",
+        "property",
+        "attribute",
         # Import/Module
-        "import", "module", "export", "require", "package", "dependency",
-        "modulenotfound", "importerror",
-
+        "import",
+        "module",
+        "export",
+        "require",
+        "package",
+        "dependency",
+        "modulenotfound",
+        "importerror",
         # Syntax/Parse
-        "syntax", "parse", "unexpected", "invalid", "malformed",
-
+        "syntax",
+        "parse",
+        "unexpected",
+        "invalid",
+        "malformed",
         # Database
-        "database", "query", "sql", "constraint", "duplicate", "foreign",
-        "key", "unique", "index", "migration",
-
+        "database",
+        "query",
+        "sql",
+        "constraint",
+        "duplicate",
+        "foreign",
+        "key",
+        "unique",
+        "index",
+        "migration",
         # File/Path
-        "file", "path", "directory", "enoent", "exist", "permission",
-
+        "file",
+        "path",
+        "directory",
+        "enoent",
+        "exist",
+        "permission",
         # Memory/Resource
-        "memory", "heap", "stack", "overflow", "limit", "quota",
-
+        "memory",
+        "heap",
+        "stack",
+        "overflow",
+        "limit",
+        "quota",
         # HTTP/API
-        "http", "request", "response", "status", "api", "endpoint",
-        "cors", "method", "header",
-
+        "http",
+        "request",
+        "response",
+        "status",
+        "api",
+        "endpoint",
+        "cors",
+        "method",
+        "header",
         # General
-        "error", "exception", "failed", "failure", "crash", "panic",
+        "error",
+        "exception",
+        "failed",
+        "failure",
+        "crash",
+        "panic",
     }
 
     def extract_keywords(self, text: str) -> set[str]:
@@ -70,7 +125,7 @@ class KeywordStrategy:
             Set of relevant keywords (lowercase)
         """
         # Extract words (including underscores for snake_case)
-        words = re.findall(r'\b[a-zA-Z_][a-zA-Z0-9_]*\b', text.lower())
+        words = re.findall(r"\b[a-zA-Z_][a-zA-Z0-9_]*\b", text.lower())
 
         # Keep words that are:
         # - In our error keywords set, OR
@@ -144,33 +199,26 @@ class ErrorCodeStrategy:
     # Patterns for common error codes across languages/frameworks
     ERROR_CODE_PATTERNS = [
         # TypeScript/JavaScript
-        r'TS\d{4}',           # TS2345
-        r'ERR_[A-Z_]+',       # ERR_MODULE_NOT_FOUND
-
+        r"TS\d{4}",  # TS2345
+        r"ERR_[A-Z_]+",  # ERR_MODULE_NOT_FOUND
         # Python
-        r'[A-Z][a-z]+Error',  # TypeError, ValueError
-        r'[A-Z][a-z]+Exception',  # RuntimeException
-
+        r"[A-Z][a-z]+Error",  # TypeError, ValueError
+        r"[A-Z][a-z]+Exception",  # RuntimeException
         # Node.js
-        r'E[A-Z]+',           # ENOENT, ECONNREFUSED
-
+        r"E[A-Z]+",  # ENOENT, ECONNREFUSED
         # HTTP status codes
-        r'\b[45]\d{2}\b',     # 404, 500
-
+        r"\b[45]\d{2}\b",  # 404, 500
         # Generic numbered errors
-        r'E\d{4,}',           # E0001
-
+        r"E\d{4,}",  # E0001
         # Rust
-        r'E\d{4}',            # E0308
-
+        r"E\d{4}",  # E0308
         # Go
-        r'[a-z]+: [a-z]+',    # panic: runtime error
+        r"[a-z]+: [a-z]+",  # panic: runtime error
     ]
 
     def __init__(self):
         self._compiled = re.compile(
-            '|'.join(f'({p})' for p in self.ERROR_CODE_PATTERNS),
-            re.IGNORECASE
+            "|".join(f"({p})" for p in self.ERROR_CODE_PATTERNS), re.IGNORECASE
         )
 
     def extract_codes(self, text: str) -> set[str]:

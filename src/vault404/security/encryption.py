@@ -16,6 +16,7 @@ try:
     from cryptography.fernet import Fernet
     from cryptography.hazmat.primitives import hashes
     from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+
     CRYPTO_AVAILABLE = True
 except ImportError:
     CRYPTO_AVAILABLE = False
@@ -23,6 +24,7 @@ except ImportError:
 
 class EncryptionError(Exception):
     """Raised when encryption/decryption fails"""
+
     pass
 
 
@@ -49,15 +51,14 @@ class Encryptor:
         """
         if not CRYPTO_AVAILABLE:
             raise EncryptionError(
-                "cryptography package not installed. "
-                "Install with: pip install cryptography"
+                "cryptography package not installed. Install with: pip install cryptography"
             )
 
         self.data_dir = data_dir or Path.home() / ".vault404"
         self.data_dir.mkdir(parents=True, exist_ok=True)
 
         # Set restrictive permissions on data directory (Unix only)
-        if os.name != 'nt':
+        if os.name != "nt":
             os.chmod(self.data_dir, 0o700)
 
         self._fernet = self._initialize_encryption(password)
@@ -79,7 +80,7 @@ class Encryptor:
         else:
             salt = secrets.token_bytes(32)
             salt_path.write_bytes(salt)
-            if os.name != 'nt':
+            if os.name != "nt":
                 os.chmod(salt_path, 0o600)
 
         # Derive key using PBKDF2
@@ -102,7 +103,7 @@ class Encryptor:
         else:
             key = Fernet.generate_key()
             key_path.write_bytes(key)
-            if os.name != 'nt':
+            if os.name != "nt":
                 os.chmod(key_path, 0o600)
 
         return Fernet(key)
@@ -118,7 +119,7 @@ class Encryptor:
             Encrypted bytes
         """
         try:
-            return self._fernet.encrypt(data.encode('utf-8'))
+            return self._fernet.encrypt(data.encode("utf-8"))
         except Exception as e:
             raise EncryptionError(f"Encryption failed: {e}")
 
@@ -133,13 +134,13 @@ class Encryptor:
             Decrypted string
         """
         try:
-            return self._fernet.decrypt(encrypted_data).decode('utf-8')
+            return self._fernet.decrypt(encrypted_data).decode("utf-8")
         except Exception as e:
             raise EncryptionError(f"Decryption failed: {e}")
 
     def encrypt_file(self, filepath: Path) -> None:
         """Encrypt a file in place."""
-        content = filepath.read_text(encoding='utf-8')
+        content = filepath.read_text(encoding="utf-8")
         encrypted = self.encrypt(content)
         filepath.write_bytes(encrypted)
 
@@ -167,7 +168,7 @@ class Encryptor:
     def generate_strong_password(length: int = 32) -> str:
         """Generate a cryptographically strong random password."""
         alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*"
-        return ''.join(secrets.choice(alphabet) for _ in range(length))
+        return "".join(secrets.choice(alphabet) for _ in range(length))
 
 
 # Fallback for when cryptography is not installed
@@ -176,17 +177,18 @@ class NoOpEncryptor:
 
     def __init__(self, *args, **kwargs):
         import warnings
+
         warnings.warn(
             "cryptography package not installed. Data will NOT be encrypted. "
             "Install with: pip install cryptography",
-            UserWarning
+            UserWarning,
         )
 
     def encrypt(self, data: str) -> bytes:
-        return data.encode('utf-8')
+        return data.encode("utf-8")
 
     def decrypt(self, encrypted_data: bytes) -> str:
-        return encrypted_data.decode('utf-8')
+        return encrypted_data.decode("utf-8")
 
 
 def get_encryptor(data_dir: Optional[Path] = None, password: Optional[str] = None):

@@ -63,12 +63,16 @@ async def find_solution(
 
     if COMMUNITY_ENABLED:
         try:
-            context_dict = {
-                "language": language,
-                "framework": framework,
-                "database": database,
-                "platform": platform,
-            } if any([language, framework, database, platform]) else None
+            context_dict = (
+                {
+                    "language": language,
+                    "framework": framework,
+                    "database": database,
+                    "platform": platform,
+                }
+                if any([language, framework, database, platform])
+                else None
+            )
 
             all_results = await federated_search(
                 error_message,
@@ -98,7 +102,8 @@ async def find_solution(
     return {
         "_summary": summary,
         "found": True,
-        "message": f"Found {count} potential solution(s)" + (f" ({community_count} from community)" if community_count else ""),
+        "message": f"Found {count} potential solution(s)"
+        + (f" ({community_count} from community)" if community_count else ""),
         "solutions": [
             {
                 "id": r.get("id", ""),
@@ -157,7 +162,9 @@ async def find_decision(
 
     count = len(results)
     top = results[0]
-    summary = f"Found {count} decision(s). Top: {top.get('title', '')} → {top.get('choice', '')[:40]}"
+    summary = (
+        f"Found {count} decision(s). Top: {top.get('title', '')} → {top.get('choice', '')[:40]}"
+    )
 
     return {
         "_summary": summary,

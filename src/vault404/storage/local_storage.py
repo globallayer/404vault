@@ -54,7 +54,7 @@ class LocalStorage:
             d.mkdir(parents=True, exist_ok=True)
 
         # Set restrictive permissions (Unix only)
-        if os.name != 'nt':
+        if os.name != "nt":
             os.chmod(self.data_dir, 0o700)
 
         # Initialize encryption
@@ -71,7 +71,7 @@ class LocalStorage:
         """Load configuration."""
         if self.config_path.exists():
             try:
-                return json.loads(self.config_path.read_text(encoding='utf-8'))
+                return json.loads(self.config_path.read_text(encoding="utf-8"))
             except (json.JSONDecodeError, IOError):
                 pass
         return {}
@@ -80,10 +80,7 @@ class LocalStorage:
         """Save configuration."""
         existing = self._load_config()
         existing.update(config)
-        self.config_path.write_text(
-            json.dumps(existing, indent=2),
-            encoding='utf-8'
-        )
+        self.config_path.write_text(json.dumps(existing, indent=2), encoding="utf-8")
 
     def _write_file(self, filepath: Path, content: str) -> None:
         """Write content to file, encrypting if enabled."""
@@ -91,7 +88,7 @@ class LocalStorage:
             encrypted = self._encryptor.encrypt(content)
             filepath.write_bytes(ENCRYPTED_MARKER + encrypted)
         else:
-            filepath.write_text(content, encoding='utf-8')
+            filepath.write_text(content, encoding="utf-8")
 
     def _read_file(self, filepath: Path) -> str:
         """Read content from file, decrypting if needed."""
@@ -104,10 +101,10 @@ class LocalStorage:
                     f"File {filepath} is encrypted but no encryptor available. "
                     "Initialize storage with encrypted=True and correct password."
                 )
-            encrypted_data = raw[len(ENCRYPTED_MARKER):]
+            encrypted_data = raw[len(ENCRYPTED_MARKER) :]
             return self._encryptor.decrypt(encrypted_data)
         else:
-            return raw.decode('utf-8')
+            return raw.decode("utf-8")
 
     def _load_index(self) -> dict:
         """Load search index from disk."""
@@ -167,8 +164,7 @@ class LocalStorage:
 
         # Compute embedding for semantic search
         embedding_text = embeddings.combine_text_for_embedding(
-            record.error.message,
-            record.context.model_dump() if record.context else None
+            record.error.message, record.context.model_dump() if record.context else None
         )
         embedding_vector = embeddings.get_embedding(embedding_text)
 
@@ -177,29 +173,31 @@ class LocalStorage:
             record.embedding = embedding_vector
 
         # Serialize to JSON
-        data = record.model_dump(mode='json')
-        data['timestamp'] = record.timestamp.isoformat()
+        data = record.model_dump(mode="json")
+        data["timestamp"] = record.timestamp.isoformat()
 
         content = json.dumps(data, indent=2, ensure_ascii=False)
         self._write_file(filepath, content)
 
         # Update index
-        self._index["errors"].append({
-            "id": record.id,
-            "error_message": record.error.message[:200],
-            "solution": record.solution.description[:200],
-            "context": record.context.model_dump(),
-            "timestamp": record.timestamp.isoformat(),
-            "verified": record.verified,
-            # Usage tracking (Phase 1)
-            "usage_count": record.usage_count,
-            "last_accessed": record.last_accessed.isoformat() if record.last_accessed else None,
-            # Verification tracking
-            "success_count": record.success_count,
-            "failure_count": record.failure_count,
-            # Semantic search embedding
-            "embedding": embedding_vector,
-        })
+        self._index["errors"].append(
+            {
+                "id": record.id,
+                "error_message": record.error.message[:200],
+                "solution": record.solution.description[:200],
+                "context": record.context.model_dump(),
+                "timestamp": record.timestamp.isoformat(),
+                "verified": record.verified,
+                # Usage tracking (Phase 1)
+                "usage_count": record.usage_count,
+                "last_accessed": record.last_accessed.isoformat() if record.last_accessed else None,
+                # Verification tracking
+                "success_count": record.success_count,
+                "failure_count": record.failure_count,
+                # Semantic search embedding
+                "embedding": embedding_vector,
+            }
+        )
         self._save_index()
 
         return {
@@ -231,8 +229,7 @@ class LocalStorage:
 
         # Compute query embedding for semantic search
         query_embedding_text = embeddings.combine_text_for_embedding(
-            error_message,
-            context.model_dump() if context else None
+            error_message, context.model_dump() if context else None
         )
         query_embedding = embeddings.get_embedding(query_embedding_text)
         semantic_available = query_embedding is not None
@@ -241,14 +238,11 @@ class LocalStorage:
             # Semantic similarity (if embeddings available)
             semantic_sim = 0.0
             if semantic_available and entry.get("embedding"):
-                semantic_sim = embeddings.cosine_similarity(
-                    query_embedding, entry["embedding"]
-                )
+                semantic_sim = embeddings.cosine_similarity(query_embedding, entry["embedding"])
 
             # Multi-strategy text similarity (fallback/complement)
             text_sim = multi_strategy_text_score(
-                error_message.lower(),
-                entry["error_message"].lower()
+                error_message.lower(), entry["error_message"].lower()
             )
 
             # Hybrid similarity: prefer semantic when available, blend with text
@@ -285,16 +279,18 @@ class LocalStorage:
             )
 
             if score > 0.15:  # Minimum threshold
-                results.append({
-                    "id": entry["id"],
-                    "error": entry["error_message"],
-                    "solution": entry["solution"],
-                    "context": entry.get("context", {}),
-                    "score": min(score, 1.0),
-                    "verified": entry.get("verified", False),
-                    "timestamp": entry.get("timestamp"),
-                    "semantic_match": semantic_sim > 0.5 if semantic_available else None,
-                })
+                results.append(
+                    {
+                        "id": entry["id"],
+                        "error": entry["error_message"],
+                        "solution": entry["solution"],
+                        "context": entry.get("context", {}),
+                        "score": min(score, 1.0),
+                        "verified": entry.get("verified", False),
+                        "timestamp": entry.get("timestamp"),
+                        "semantic_match": semantic_sim > 0.5 if semantic_available else None,
+                    }
+                )
 
         # Sort by score and return top results
         results.sort(key=lambda x: x["score"], reverse=True)
@@ -337,21 +333,23 @@ class LocalStorage:
         if embedding_vector:
             record.embedding = embedding_vector
 
-        data = record.model_dump(mode='json')
-        data['timestamp'] = record.timestamp.isoformat()
+        data = record.model_dump(mode="json")
+        data["timestamp"] = record.timestamp.isoformat()
 
         content = json.dumps(data, indent=2, ensure_ascii=False)
         self._write_file(filepath, content)
 
         # Update index
-        self._index["decisions"].append({
-            "id": record.id,
-            "title": record.title,
-            "choice": record.choice,
-            "context": record.context.model_dump(),
-            "timestamp": record.timestamp.isoformat(),
-            "embedding": embedding_vector,
-        })
+        self._index["decisions"].append(
+            {
+                "id": record.id,
+                "title": record.title,
+                "choice": record.choice,
+                "context": record.context.model_dump(),
+                "timestamp": record.timestamp.isoformat(),
+                "embedding": embedding_vector,
+            }
+        )
         self._save_index()
 
         return {
@@ -378,9 +376,7 @@ class LocalStorage:
             # Semantic similarity
             semantic_sim = 0.0
             if semantic_available and entry.get("embedding"):
-                semantic_sim = embeddings.cosine_similarity(
-                    query_embedding, entry["embedding"]
-                )
+                semantic_sim = embeddings.cosine_similarity(query_embedding, entry["embedding"])
 
             # Text similarity (fallback/complement)
             title_sim = self._text_similarity(topic.lower(), entry["title"].lower())
@@ -394,12 +390,14 @@ class LocalStorage:
                 similarity = text_sim
 
             if similarity > 0.1:
-                results.append({
-                    "id": entry["id"],
-                    "title": entry["title"],
-                    "choice": entry["choice"],
-                    "similarity": similarity,
-                })
+                results.append(
+                    {
+                        "id": entry["id"],
+                        "title": entry["title"],
+                        "choice": entry["choice"],
+                        "similarity": similarity,
+                    }
+                )
 
         results.sort(key=lambda x: x["similarity"], reverse=True)
         return results[:limit]
@@ -419,22 +417,24 @@ class LocalStorage:
         if embedding_vector:
             record.embedding = embedding_vector
 
-        data = record.model_dump(mode='json')
-        data['timestamp'] = record.timestamp.isoformat()
+        data = record.model_dump(mode="json")
+        data["timestamp"] = record.timestamp.isoformat()
 
         content = json.dumps(data, indent=2, ensure_ascii=False)
         self._write_file(filepath, content)
 
         # Update index
-        self._index["patterns"].append({
-            "id": record.id,
-            "name": record.name,
-            "category": record.category,
-            "problem": record.problem[:200],
-            "solution": record.solution[:200],
-            "timestamp": record.timestamp.isoformat(),
-            "embedding": embedding_vector,
-        })
+        self._index["patterns"].append(
+            {
+                "id": record.id,
+                "name": record.name,
+                "category": record.category,
+                "problem": record.problem[:200],
+                "solution": record.solution[:200],
+                "timestamp": record.timestamp.isoformat(),
+                "embedding": embedding_vector,
+            }
+        )
         self._save_index()
 
         return {
@@ -465,9 +465,7 @@ class LocalStorage:
             # Semantic similarity
             semantic_sim = 0.0
             if semantic_available and entry.get("embedding"):
-                semantic_sim = embeddings.cosine_similarity(
-                    query_embedding, entry["embedding"]
-                )
+                semantic_sim = embeddings.cosine_similarity(query_embedding, entry["embedding"])
 
             # Text similarity (fallback/complement)
             problem_sim = self._text_similarity(problem.lower(), entry["problem"].lower())
@@ -481,14 +479,16 @@ class LocalStorage:
                 similarity = text_sim
 
             if similarity > 0.1:
-                results.append({
-                    "id": entry["id"],
-                    "name": entry["name"],
-                    "category": entry["category"],
-                    "problem": entry["problem"],
-                    "solution": entry["solution"],
-                    "similarity": similarity,
-                })
+                results.append(
+                    {
+                        "id": entry["id"],
+                        "name": entry["name"],
+                        "category": entry["category"],
+                        "problem": entry["problem"],
+                        "solution": entry["solution"],
+                        "similarity": similarity,
+                    }
+                )
 
         results.sort(key=lambda x: x["similarity"], reverse=True)
         return results[:limit]
@@ -526,9 +526,9 @@ class LocalStorage:
         """Get statistics about the knowledge base."""
         return {
             "total_records": (
-                len(self._index.get("errors", [])) +
-                len(self._index.get("decisions", [])) +
-                len(self._index.get("patterns", []))
+                len(self._index.get("errors", []))
+                + len(self._index.get("decisions", []))
+                + len(self._index.get("patterns", []))
             ),
             "errors": len(self._index.get("errors", [])),
             "decisions": len(self._index.get("decisions", [])),

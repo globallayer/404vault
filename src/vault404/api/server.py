@@ -29,7 +29,7 @@ DEFAULT_RATE_LIMIT = os.environ.get("VAULT404_DEFAULT_RATE_LIMIT", "60/minute")
 # CORS settings
 CORS_ORIGINS = os.environ.get(
     "VAULT404_CORS_ORIGINS",
-    "*"  # Default to allow all for development
+    "*",  # Default to allow all for development
 ).split(",")
 
 
@@ -111,7 +111,9 @@ def create_app(
     )
 
     # Rate limiting
-    should_rate_limit = enable_rate_limiting if enable_rate_limiting is not None else RATE_LIMIT_ENABLED
+    should_rate_limit = (
+        enable_rate_limiting if enable_rate_limiting is not None else RATE_LIMIT_ENABLED
+    )
 
     if should_rate_limit:
         try:
@@ -141,7 +143,7 @@ def create_app(
             status_code=422,
             content={
                 "detail": "Validation error",
-                "errors": exc.errors() if hasattr(exc, 'errors') else str(exc),
+                "errors": exc.errors() if hasattr(exc, "errors") else str(exc),
             },
         )
 
@@ -172,7 +174,7 @@ app = create_app()
 
 
 def run_server(
-    host: str = "0.0.0.0",
+    host: str = "0.0.0.0",  # nosec B104 - intentional for development server
     port: int = 8000,
     reload: bool = False,
     log_level: str = "info",

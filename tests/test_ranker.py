@@ -116,10 +116,7 @@ class TestKeywordStrategy:
     def test_keyword_overlap_score(self):
         """Should score based on keyword overlap."""
         strategy = KeywordStrategy()
-        score = strategy.score(
-            "connection refused ECONNREFUSED",
-            "connection timeout ETIMEDOUT"
-        )
+        score = strategy.score("connection refused ECONNREFUSED", "connection timeout ETIMEDOUT")
         assert score > 0  # "connection" overlaps
 
 
@@ -170,8 +167,7 @@ class TestErrorCodeStrategy:
         """Exact error code match should score 1.0."""
         strategy = ErrorCodeStrategy()
         score = strategy.score(
-            "error TS2345: Argument type mismatch",
-            "TS2345: Type 'string' not assignable"
+            "error TS2345: Argument type mismatch", "TS2345: Type 'string' not assignable"
         )
         assert score == 1.0
 
@@ -188,25 +184,20 @@ class TestMultiStrategyScore:
     def test_exact_error_code_high(self):
         """Exact error code match should score high."""
         score = multi_strategy_text_score(
-            "TS2345: Argument of type 'string'",
-            "error TS2345: Argument type mismatch"
+            "TS2345: Argument of type 'string'", "error TS2345: Argument type mismatch"
         )
         assert score > 0.6  # Error code bonus
 
     def test_similar_messages_moderate(self):
         """Similar messages without exact codes should score moderately."""
         score = multi_strategy_text_score(
-            "Cannot read property 'x' of undefined",
-            "Cannot read property 'y' of undefined"
+            "Cannot read property 'x' of undefined", "Cannot read property 'y' of undefined"
         )
         assert score > 0.4
 
     def test_unrelated_messages_low(self):
         """Unrelated messages should score low."""
-        score = multi_strategy_text_score(
-            "Database connection timeout",
-            "Invalid JSON syntax"
-        )
+        score = multi_strategy_text_score("Database connection timeout", "Invalid JSON syntax")
         assert score < 0.3
 
 

@@ -50,8 +50,9 @@ def load_api_keys() -> dict:
         return {}
 
     import json
+
     try:
-        return json.loads(API_KEYS_FILE.read_text(encoding='utf-8'))
+        return json.loads(API_KEYS_FILE.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, IOError):
         return {}
 
@@ -59,8 +60,9 @@ def load_api_keys() -> dict:
 def save_api_keys(keys: dict) -> None:
     """Save API keys to storage."""
     import json
+
     API_KEYS_FILE.parent.mkdir(parents=True, exist_ok=True)
-    API_KEYS_FILE.write_text(json.dumps(keys, indent=2), encoding='utf-8')
+    API_KEYS_FILE.write_text(json.dumps(keys, indent=2), encoding="utf-8")
 
 
 def register_api_key(name: str, key: Optional[str] = None) -> str:
@@ -80,7 +82,7 @@ def register_api_key(name: str, key: Optional[str] = None) -> str:
     keys = load_api_keys()
     keys[hash_api_key(key)] = {
         "name": name,
-        "created_at": __import__('datetime').datetime.now().isoformat(),
+        "created_at": __import__("datetime").datetime.now().isoformat(),
     }
     save_api_keys(keys)
 

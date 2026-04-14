@@ -52,7 +52,7 @@ async def verify_solution(record_id: str, success: bool) -> dict:
     if success:
         filepath = storage.errors_dir / f"{record_id}.json"
         if filepath.exists():
-            record = json.loads(filepath.read_text(encoding='utf-8'))
+            record = json.loads(filepath.read_text(encoding="utf-8"))
             anon = anonymize_record(record)
             contrib_result = await contrib.confirm_contribution(record_id, anon)
 
@@ -120,6 +120,7 @@ async def purge_all(confirm: bool = False) -> dict:
 
     if data_dir.exists():
         import shutil
+
         shutil.rmtree(data_dir)
 
     # Reset the centralized storage singleton
@@ -166,7 +167,7 @@ async def export_all(output_path: Optional[str] = None) -> dict:
         "metadata": {
             "format": "vault404-export-v1",
             "description": "Complete export of vault404 knowledge base",
-        }
+        },
     }
 
     # Determine output path
@@ -175,7 +176,7 @@ async def export_all(output_path: Optional[str] = None) -> dict:
         output_path = str(Path.home() / f"vault404-export-{date_str}.json")
 
     # Write export
-    with open(output_path, 'w', encoding='utf-8') as f:
+    with open(output_path, "w", encoding="utf-8") as f:
         json.dump(export_data, f, indent=2, ensure_ascii=False)
 
     return {
