@@ -87,6 +87,10 @@ class ErrorFix(BaseModel):
     success_count: int = 0
     failure_count: int = 0
 
+    # Usage tracking (for enhanced ranking)
+    usage_count: int = 0
+    last_accessed: Optional[datetime] = None
+
     def to_aaak(self) -> str:
         """Convert to AAAK compressed format for storage"""
         ctx = self.context.to_aaak()

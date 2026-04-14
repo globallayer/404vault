@@ -14,6 +14,8 @@ from difflib import SequenceMatcher
 
 from .schemas import ErrorFix, Decision, Pattern, Context
 from ..security.encryption import get_encryptor, CRYPTO_AVAILABLE
+from ..search.ranker import temporal_decay, calculate_score
+from ..search.strategies import multi_strategy_text_score
 
 
 # Magic bytes to identify encrypted files
@@ -111,10 +113,43 @@ class LocalStorage:
         if self.index_path.exists():
             try:
                 content = self._read_file(self.index_path)
-                return json.loads(content)
+                index = json.loads(content)
+                # Run migration to add new fields
+                self._migrate_index(index)
+                return index
             except (json.JSONDecodeError, IOError, ValueError):
                 pass
         return {"errors": [], "decisions": [], "patterns": []}
+
+    def _migrate_index(self, index: dict) -> None:
+        """
+        Add missing fields to existing index entries.
+
+        This ensures backward compatibility when new fields are added.
+        Saves directly to disk since self._index may not be set yet.
+        """
+        migrated = False
+
+        for entry in index.get("errors", []):
+            # Add usage tracking fields (Phase 1)
+            if "usage_count" not in entry:
+                entry["usage_count"] = 0
+                migrated = True
+            if "last_accessed" not in entry:
+                entry["last_accessed"] = None
+                migrated = True
+            # Add verification tracking fields
+            if "success_count" not in entry:
+                entry["success_count"] = 0
+                migrated = True
+            if "failure_count" not in entry:
+                entry["failure_count"] = 0
+                migrated = True
+
+        if migrated:
+            # Save directly (self._index may not be set yet during init)
+            content = json.dumps(index, indent=2, ensure_ascii=False)
+            self._write_file(self.index_path, content)
 
     def _save_index(self) -> None:
         """Save search index to disk."""
@@ -144,6 +179,12 @@ class LocalStorage:
             "context": record.context.model_dump(),
             "timestamp": record.timestamp.isoformat(),
             "verified": record.verified,
+            # Usage tracking (Phase 1)
+            "usage_count": record.usage_count,
+            "last_accessed": record.last_accessed.isoformat() if record.last_accessed else None,
+            # Verification tracking
+            "success_count": record.success_count,
+            "failure_count": record.failure_count,
         })
         self._save_index()
 
@@ -159,39 +200,86 @@ class LocalStorage:
         context: Optional[Context] = None,
         limit: int = 5,
     ) -> list[dict]:
-        """Find solutions for an error using semantic matching."""
+        """
+        Find solutions for an error using multi-strategy matching.
+
+        Uses a combination of:
+        - Multi-strategy text matching (keyword, fuzzy, error codes)
+        - Temporal decay (recent fixes rank higher)
+        - Context matching (same language/framework)
+        - Verification status and success rate
+        - Usage popularity
+        """
         results = []
+        now = datetime.now()
 
         for entry in self._index.get("errors", []):
-            # Calculate text similarity
-            similarity = self._text_similarity(
+            # Multi-strategy text similarity
+            text_sim = multi_strategy_text_score(
                 error_message.lower(),
                 entry["error_message"].lower()
             )
 
-            # Boost by context match
+            # Context match score
+            ctx_score = 0.0
             if context and entry.get("context"):
                 ctx = Context(**entry["context"])
                 ctx_score = context.match_score(ctx)
-                similarity = (similarity + ctx_score) / 2
 
-            # Boost verified solutions
-            if entry.get("verified"):
-                similarity += 0.1
+            # Temporal decay (recent fixes rank higher)
+            try:
+                timestamp = datetime.fromisoformat(entry["timestamp"])
+                temporal = temporal_decay(timestamp, half_life_days=30, now=now)
+            except (ValueError, KeyError):
+                temporal = 0.5  # Default for invalid timestamps
 
-            if similarity > 0.1:  # Minimum threshold
+            # Calculate combined score with all signals
+            score = calculate_score(
+                text_similarity=text_sim,
+                context_match=ctx_score,
+                temporal_factor=temporal,
+                verified=entry.get("verified", False),
+                success_count=entry.get("success_count", 0),
+                failure_count=entry.get("failure_count", 0),
+                usage_count=entry.get("usage_count", 0),
+            )
+
+            if score > 0.15:  # Minimum threshold
                 results.append({
                     "id": entry["id"],
                     "error": entry["error_message"],
                     "solution": entry["solution"],
                     "context": entry.get("context", {}),
-                    "score": min(similarity, 1.0),
+                    "score": min(score, 1.0),
                     "verified": entry.get("verified", False),
+                    "timestamp": entry.get("timestamp"),
                 })
 
         # Sort by score and return top results
         results.sort(key=lambda x: x["score"], reverse=True)
-        return results[:limit]
+        top_results = results[:limit]
+
+        # Track usage for returned results
+        self._track_usage([r["id"] for r in top_results])
+
+        return top_results
+
+    def _track_usage(self, record_ids: list[str]) -> None:
+        """Update usage stats for records returned in search results."""
+        if not record_ids:
+            return
+
+        now = datetime.now().isoformat()
+        updated = False
+
+        for entry in self._index.get("errors", []):
+            if entry["id"] in record_ids:
+                entry["usage_count"] = entry.get("usage_count", 0) + 1
+                entry["last_accessed"] = now
+                updated = True
+
+        if updated:
+            self._save_index()
 
     # =========================================================================
     # Decision Storage
@@ -318,11 +406,13 @@ class LocalStorage:
 
     async def verify_solution(self, record_id: str, success: bool) -> dict:
         """Mark a solution as verified or not."""
-        # Update in index
+        # Update in index (including success/failure counts for ranking)
         for entry in self._index.get("errors", []):
             if entry["id"] == record_id:
-                entry["verified"] = success
+                entry["verified"] = success if success else entry.get("verified", False)
                 entry["verification_date"] = datetime.now().isoformat()
+                entry["success_count"] = entry.get("success_count", 0) + (1 if success else 0)
+                entry["failure_count"] = entry.get("failure_count", 0) + (0 if success else 1)
                 break
 
         self._save_index()
@@ -332,7 +422,7 @@ class LocalStorage:
         if filepath.exists():
             content = self._read_file(filepath)
             data = json.loads(content)
-            data["verified"] = success
+            data["verified"] = success if success else data.get("verified", False)
             data["success_count"] = data.get("success_count", 0) + (1 if success else 0)
             data["failure_count"] = data.get("failure_count", 0) + (0 if success else 1)
             self._write_file(filepath, json.dumps(data, indent=2))

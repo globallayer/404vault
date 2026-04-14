@@ -53,6 +53,14 @@ htmlcov/
 *.key
 *.salt
 
+# Internal docs (keep local, not in public repo)
+TODO.md
+ROADMAP.md
+docs/MARKETING_PLAN.md
+docs/marketing/
+docs/articles/
+docs/medium-article.md
+
 # OS
 .DS_Store
 Thumbs.db
