@@ -479,6 +479,291 @@ DATABASE_ERRORS = [
     },
 ]
 
+NEXTJS_ERRORS = [
+    {
+        "error_message": "Error: NEXT_REDIRECT is not allowed to be caught",
+        "solution": "redirect() throws an error intentionally. Don't wrap redirect() in try/catch. Use it at the end of server actions or route handlers, not inside try blocks.",
+        "category": "routing",
+        "language": "typescript",
+        "framework": "nextjs",
+        "error_type": "NEXT_REDIRECT",
+    },
+    {
+        "error_message": "Error: Invariant: headers() expects to have requestAsyncStorage",
+        "solution": "headers() can only be used in Server Components, Route Handlers, or Server Actions. Move it out of client components. Use cookies/headers in page.tsx or layout.tsx.",
+        "category": "server-components",
+        "language": "typescript",
+        "framework": "nextjs",
+        "error_type": "InvariantError",
+    },
+    {
+        "error_message": "Error: Dynamic server usage: cookies",
+        "solution": "Using cookies() opts route into dynamic rendering. Add export const dynamic = 'force-dynamic' or use middleware for auth. For static pages, pass cookies via props.",
+        "category": "server-components",
+        "language": "typescript",
+        "framework": "nextjs",
+        "error_type": "DynamicServerUsage",
+    },
+    {
+        "error_message": "Error: 'use client' must be at the top of the file",
+        "solution": "Move 'use client' directive to the very first line, before any imports. No comments or code can precede it. Create separate client component file if needed.",
+        "category": "client-components",
+        "language": "typescript",
+        "framework": "nextjs",
+        "error_type": "UseClientError",
+    },
+    {
+        "error_message": "Error: Event handlers cannot be passed to Client Component props",
+        "solution": "onClick and other event handlers only work in Client Components. Add 'use client' to the component using onClick, or create a separate Client Component wrapper.",
+        "category": "client-components",
+        "language": "typescript",
+        "framework": "nextjs",
+        "error_type": "EventHandlerError",
+    },
+    {
+        "error_message": "Error: You're importing a component that needs useState but none of its parents are client components",
+        "solution": "Add 'use client' to the file using useState/useEffect. Or restructure: keep server logic in Server Component, pass data as props to Client Component children.",
+        "category": "client-components",
+        "language": "typescript",
+        "framework": "nextjs",
+        "error_type": "UseStateError",
+    },
+    {
+        "error_message": "Error: Functions cannot be passed directly to Client Components unless you explicitly expose it",
+        "solution": "Functions can't be serialized between server/client. Use Server Actions with 'use server' directive, or define functions in Client Components directly.",
+        "category": "server-actions",
+        "language": "typescript",
+        "framework": "nextjs",
+        "error_type": "SerializationError",
+    },
+    {
+        "error_message": "Error: Only plain objects can be passed to Client Components from Server Components",
+        "solution": "Convert complex objects to plain objects: JSON.parse(JSON.stringify(obj)). For dates, pass as ISO strings. For Maps/Sets, convert to arrays.",
+        "category": "serialization",
+        "language": "typescript",
+        "framework": "nextjs",
+        "error_type": "SerializationError",
+    },
+    {
+        "error_message": "Warning: Cannot update a component from inside the function body of a different component",
+        "solution": "Don't call setState during render of another component. Move state update to useEffect or wrap in startTransition. Check for state updates in custom hooks.",
+        "category": "react-rendering",
+        "language": "typescript",
+        "framework": "nextjs",
+        "error_type": "ReactWarning",
+    },
+    {
+        "error_message": "Error: Attempted to call router.push() in server component",
+        "solution": "useRouter() is client-only. For server-side redirects use redirect() from 'next/navigation'. For client navigation create a Client Component with useRouter.",
+        "category": "routing",
+        "language": "typescript",
+        "framework": "nextjs",
+        "error_type": "ServerComponentError",
+    },
+]
+
+AUTH_SECURITY_ERRORS = [
+    {
+        "error_message": "JWTExpired: jwt expired",
+        "solution": "Implement token refresh flow. On 401, use refresh token to get new access token. Store refresh token securely (httpOnly cookie). Add token expiry buffer.",
+        "category": "auth",
+        "language": "typescript",
+        "error_type": "JWTExpired",
+    },
+    {
+        "error_message": "Error: Invalid signature - JWT",
+        "solution": "JWT secret mismatch between signing and verification. Ensure same secret on all servers. Check for environment variable issues. Verify token hasn't been tampered.",
+        "category": "auth",
+        "language": "typescript",
+        "error_type": "InvalidSignature",
+    },
+    {
+        "error_message": "NextAuth: NEXTAUTH_SECRET is missing",
+        "solution": "Set NEXTAUTH_SECRET in .env: openssl rand -base64 32. Required for production. Also set NEXTAUTH_URL to your app URL.",
+        "category": "auth",
+        "language": "typescript",
+        "framework": "nextjs",
+        "error_type": "ConfigurationError",
+    },
+    {
+        "error_message": "Error: Session callback must return a session object",
+        "solution": "NextAuth session callback must return { user, expires }. Spread existing session: return { ...session, user: { ...session.user, customField } }.",
+        "category": "auth",
+        "language": "typescript",
+        "framework": "nextjs",
+        "error_type": "CallbackError",
+    },
+    {
+        "error_message": "CSRF token mismatch",
+        "solution": "Include CSRF token in requests. For fetch: get token from cookie/meta tag, add to headers. Check SameSite cookie settings. Verify origin/referer headers.",
+        "category": "security",
+        "language": "typescript",
+        "error_type": "CSRFError",
+    },
+    {
+        "error_message": "Error: OAuth callback error - redirect_uri_mismatch",
+        "solution": "OAuth callback URL must exactly match registered URL including http/https, port, and path. Update in provider console. Check for trailing slashes.",
+        "category": "auth",
+        "language": "typescript",
+        "error_type": "OAuthError",
+    },
+    {
+        "error_message": "bcrypt: Invalid salt version",
+        "solution": "Salt format incorrect. Generate new hash: bcrypt.hash(password, 10). Don't store raw salt separately. Ensure bcrypt version compatibility.",
+        "category": "auth",
+        "language": "javascript",
+        "error_type": "BcryptError",
+    },
+    {
+        "error_message": "Error: Unauthorized - API key invalid",
+        "solution": "Check API key format and expiration. Verify key is sent in correct header (usually Authorization: Bearer <key>). Regenerate key if compromised.",
+        "category": "auth",
+        "language": "typescript",
+        "error_type": "UnauthorizedError",
+    },
+]
+
+GO_RUST_ERRORS = [
+    # Go errors
+    {
+        "error_message": "cannot use X (type Y) as type Z in argument",
+        "solution": "Type mismatch in Go. Check interface implementation. Use type assertion: val.(Type). For slices, may need explicit conversion.",
+        "category": "types",
+        "language": "go",
+        "error_type": "TypeError",
+    },
+    {
+        "error_message": "undefined: X - Go",
+        "solution": "Symbol not defined. Check import path. Ensure function/type is exported (starts with capital). Run go mod tidy. Check package name matches directory.",
+        "category": "imports",
+        "language": "go",
+        "error_type": "UndefinedError",
+    },
+    {
+        "error_message": "fatal error: all goroutines are asleep - deadlock!",
+        "solution": "Deadlock detected. Check channel operations: ensure sends have receivers. Use buffered channels. Add timeout with select and time.After. Close channels when done.",
+        "category": "concurrency",
+        "language": "go",
+        "error_type": "DeadlockError",
+    },
+    {
+        "error_message": "panic: runtime error: invalid memory address or nil pointer dereference",
+        "solution": "Nil pointer access. Add nil checks before using pointers. Initialize structs properly. Check map access returns ok: val, ok := m[key].",
+        "category": "null-reference",
+        "language": "go",
+        "error_type": "NilPointerError",
+    },
+    {
+        "error_message": "go: module X: not found",
+        "solution": "Module not available. Run go mod tidy. Check module path spelling. For private repos: go env -w GOPRIVATE=github.com/yourorg. Verify go.sum is committed.",
+        "category": "modules",
+        "language": "go",
+        "error_type": "ModuleNotFound",
+    },
+    # Rust errors
+    {
+        "error_message": "error[E0382]: borrow of moved value",
+        "solution": "Value ownership moved. Use .clone() to copy, &ref for borrowing, or restructure to avoid move. Consider using Rc<T> or Arc<T> for shared ownership.",
+        "category": "ownership",
+        "language": "rust",
+        "error_type": "E0382",
+    },
+    {
+        "error_message": "error[E0502]: cannot borrow X as mutable because it is also borrowed as immutable",
+        "solution": "Rust borrow rules: one mutable OR multiple immutable refs. Scope borrows tighter, use blocks {}, or clone data. Consider RefCell for interior mutability.",
+        "category": "ownership",
+        "language": "rust",
+        "error_type": "E0502",
+    },
+    {
+        "error_message": "error[E0599]: no method named X found for struct Y",
+        "solution": "Method doesn't exist or trait not in scope. Add use statement for trait. Check method is implemented for correct type. Verify generic bounds.",
+        "category": "types",
+        "language": "rust",
+        "error_type": "E0599",
+    },
+    {
+        "error_message": "error[E0433]: failed to resolve: use of undeclared crate or module",
+        "solution": "Add dependency to Cargo.toml. Use 'mod' to declare module. Check file structure matches module path. Run cargo build to fetch dependencies.",
+        "category": "modules",
+        "language": "rust",
+        "error_type": "E0433",
+    },
+    {
+        "error_message": "error[E0308]: mismatched types - expected X found Y",
+        "solution": "Type conversion needed. Use .into(), From/Into traits, or explicit cast. For Result/Option: use ? operator or match. Check function signature.",
+        "category": "types",
+        "language": "rust",
+        "error_type": "E0308",
+    },
+]
+
+CLOUD_K8S_ERRORS = [
+    {
+        "error_message": "Error: ImagePullBackOff - Failed to pull image",
+        "solution": "Kubernetes can't pull image. Check image name/tag. Verify registry credentials in imagePullSecrets. For private registries create docker-registry secret.",
+        "category": "containers",
+        "platform": "kubernetes",
+        "error_type": "ImagePullBackOff",
+    },
+    {
+        "error_message": "Error: CrashLoopBackOff",
+        "solution": "Container crashing repeatedly. Check logs: kubectl logs <pod> --previous. Common causes: missing env vars, config errors, OOM. Increase resources or fix app.",
+        "category": "containers",
+        "platform": "kubernetes",
+        "error_type": "CrashLoopBackOff",
+    },
+    {
+        "error_message": "Error: OOMKilled - Container killed due to OOM",
+        "solution": "Container exceeded memory limit. Increase resources.limits.memory in deployment. Profile app memory usage. Check for memory leaks. Add swap if needed.",
+        "category": "resources",
+        "platform": "kubernetes",
+        "error_type": "OOMKilled",
+    },
+    {
+        "error_message": "Error: Pending - 0/3 nodes available: insufficient cpu",
+        "solution": "No nodes have enough resources. Reduce resource requests, scale up cluster, or delete unused deployments. Check kubectl describe pod for details.",
+        "category": "resources",
+        "platform": "kubernetes",
+        "error_type": "InsufficientResources",
+    },
+    {
+        "error_message": "Error: Service 'X' not found - Kubernetes DNS",
+        "solution": "Service doesn't exist or wrong namespace. Use full DNS: service-name.namespace.svc.cluster.local. Check: kubectl get svc -A. Verify service selector matches pod labels.",
+        "category": "networking",
+        "platform": "kubernetes",
+        "error_type": "ServiceNotFound",
+    },
+    {
+        "error_message": "Error: connection refused to database from pod",
+        "solution": "Check network policies. Verify database service exists. Use ClusterIP for internal access. Check database pod is running. Test with: kubectl exec -it pod -- nc -zv db 5432.",
+        "category": "networking",
+        "platform": "kubernetes",
+        "error_type": "ConnectionRefused",
+    },
+    {
+        "error_message": "AWS: AccessDenied - User is not authorized to perform this operation",
+        "solution": "IAM permissions missing. Check IAM policy attached to role/user. Verify resource ARN is correct. Use AWS Policy Simulator to debug. Check STS assume role if using cross-account.",
+        "category": "permissions",
+        "platform": "aws",
+        "error_type": "AccessDenied",
+    },
+    {
+        "error_message": "Vercel: Error: FUNCTION_INVOCATION_TIMEOUT",
+        "solution": "Serverless function exceeded timeout (10s hobby, 60s pro). Optimize code, use edge functions, or move long tasks to background jobs. Check external API calls.",
+        "category": "serverless",
+        "platform": "vercel",
+        "error_type": "FunctionTimeout",
+    },
+    {
+        "error_message": "Railway: Error: Build failed - Out of memory",
+        "solution": "Build needs more RAM. Optimize build: reduce dependencies, use multi-stage Docker builds. Upgrade Railway plan for more resources. Split into smaller services.",
+        "category": "build",
+        "platform": "railway",
+        "error_type": "OutOfMemory",
+    },
+]
+
 DEVOPS_ERRORS = [
     # Git errors
     {
@@ -683,12 +968,48 @@ def main():
     total_success += s
     total_failed += f
 
+    # Next.js errors
+    print(f"\n[Next.js] - {len(NEXTJS_ERRORS)} patterns")
+    print("-" * 50)
+    records = build_records_from_data(NEXTJS_ERRORS)
+    s, f = insert_records(records)
+    total_success += s
+    total_failed += f
+
+    # Auth/Security errors
+    print(f"\n[Auth/Security] - {len(AUTH_SECURITY_ERRORS)} patterns")
+    print("-" * 50)
+    records = build_records_from_data(AUTH_SECURITY_ERRORS)
+    s, f = insert_records(records)
+    total_success += s
+    total_failed += f
+
+    # Go/Rust errors
+    print(f"\n[Go/Rust] - {len(GO_RUST_ERRORS)} patterns")
+    print("-" * 50)
+    records = build_records_from_data(GO_RUST_ERRORS)
+    s, f = insert_records(records)
+    total_success += s
+    total_failed += f
+
+    # Cloud/K8s errors
+    print(f"\n[Cloud/Kubernetes] - {len(CLOUD_K8S_ERRORS)} patterns")
+    print("-" * 50)
+    records = build_records_from_data(CLOUD_K8S_ERRORS)
+    s, f = insert_records(records)
+    total_success += s
+    total_failed += f
+
     # Summary
     total_patterns = (
         len(JAVASCRIPT_TYPESCRIPT_ERRORS) +
         len(PYTHON_ERRORS) +
         len(DATABASE_ERRORS) +
-        len(DEVOPS_ERRORS)
+        len(DEVOPS_ERRORS) +
+        len(NEXTJS_ERRORS) +
+        len(AUTH_SECURITY_ERRORS) +
+        len(GO_RUST_ERRORS) +
+        len(CLOUD_K8S_ERRORS)
     )
 
     print()
