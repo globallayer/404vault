@@ -8,6 +8,7 @@ from datetime import datetime
 from ..storage import get_storage, reset_storage
 from ..sync.anonymizer import anonymize_record
 from ..sync.contribution import ContributionManager
+from ..sync.community import get_community_brain
 from ..recall.tracker import get_tracker
 
 # Enable recall tracking via environment variable
@@ -100,29 +101,58 @@ async def get_stats() -> dict:
     """
     Get statistics about the vault404 knowledge base.
 
+    Returns both local and community brain stats.
+
     Returns:
-        dict with stats about records stored
+        dict with stats about records stored locally and in community brain
     """
     storage = get_storage()
+    community = get_community_brain()
 
-    stats = await storage.get_stats()
+    # Get local stats
+    local_stats = await storage.get_stats()
+    local_total = local_stats.get("total_records", 0)
+    local_fixes = local_stats.get("errors", 0)
+    local_decisions = local_stats.get("decisions", 0)
+    local_patterns = local_stats.get("patterns", 0)
 
-    total = stats.get("total_records", 0)
-    fixes = stats.get("errors", 0)
-    decisions = stats.get("decisions", 0)
-    patterns = stats.get("patterns", 0)
+    # Get community brain stats
+    community_stats = await community.get_stats()
+    community_total = community_stats.get("total", 0)
+    community_fixes = community_stats.get("fixes", 0)
+    community_decisions = community_stats.get("decisions", 0)
+    community_patterns = community_stats.get("patterns", 0)
+
+    # Combined totals
+    combined_total = local_total + community_total
+
+    # Build summary
+    summary_parts = [f"vault404: {combined_total} total records"]
+    summary_parts.append(f"Local: {local_total} ({local_fixes} fixes, {local_decisions} decisions, {local_patterns} patterns)")
+    summary_parts.append(f"Community Brain: {community_total} ({community_fixes} fixes, {community_decisions} decisions, {community_patterns} patterns)")
 
     return {
-        "_summary": f"vault404: {total} records ({fixes} fixes, {decisions} decisions, {patterns} patterns)",
+        "_summary": " | ".join(summary_parts),
         "success": True,
         "stats": {
-            "total_records": total,
-            "error_fixes": fixes,
-            "decisions": decisions,
-            "patterns": patterns,
-            "data_directory": stats.get("data_dir", ""),
+            "combined_total": combined_total,
+            "local": {
+                "total": local_total,
+                "fixes": local_fixes,
+                "decisions": local_decisions,
+                "patterns": local_patterns,
+                "data_directory": local_stats.get("data_dir", ""),
+            },
+            "community": {
+                "total": community_total,
+                "fixes": community_fixes,
+                "decisions": community_decisions,
+                "patterns": community_patterns,
+                "categories": community_stats.get("categories", {}),
+                "online": community_stats.get("success", False),
+            },
         },
-        "message": "vault404 statistics retrieved",
+        "message": "vault404 statistics retrieved (local + community)",
     }
 
 

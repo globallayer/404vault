@@ -341,6 +341,67 @@ class CommunityBrain:
         machine_info = f"{platform.node()}-{platform.machine()}-{uuid.getnode()}"
         return hashlib.sha256(machine_info.encode()).hexdigest()[:16]
 
+    async def get_stats(self) -> dict:
+        """
+        Get statistics about the community brain.
+
+        Returns:
+            dict with total records and breakdown by category
+        """
+        try:
+            if HTTP_CLIENT == "httpx":
+                async with httpx.AsyncClient() as client:
+                    response = await client.get(
+                        f"{self.api_url}/community_solutions",
+                        headers=self._get_headers(),
+                        params={"select": "id,record_type,category"},
+                        timeout=10.0,
+                    )
+                    response.raise_for_status()
+                    results = response.json()
+            else:
+                import requests
+
+                response = requests.get(
+                    f"{self.api_url}/community_solutions",
+                    headers=self._get_headers(),
+                    params={"select": "id,record_type,category"},
+                    timeout=10,
+                )
+                response.raise_for_status()
+                results = response.json()
+
+            # Count by record type
+            total = len(results)
+            fixes = sum(1 for r in results if r.get("record_type") == "error_fix")
+            decisions = sum(1 for r in results if r.get("record_type") == "decision")
+            patterns = sum(1 for r in results if r.get("record_type") == "pattern")
+
+            # Count by category
+            categories = {}
+            for r in results:
+                cat = r.get("category", "uncategorized")
+                categories[cat] = categories.get(cat, 0) + 1
+
+            return {
+                "success": True,
+                "total": total,
+                "fixes": fixes,
+                "decisions": decisions,
+                "patterns": patterns,
+                "categories": categories,
+            }
+
+        except Exception as e:
+            return {
+                "success": False,
+                "error": str(e),
+                "total": 0,
+                "fixes": 0,
+                "decisions": 0,
+                "patterns": 0,
+            }
+
     def _calculate_relevance(self, query: str, record: dict) -> float:
         """Calculate relevance score between query and record."""
         error_msg = record.get("error_data", {}).get("message", "").lower()
