@@ -58,7 +58,7 @@ def get_headers():
 def generate_content_hash(error_msg: str, solution: str) -> str:
     """Generate a unique content hash for deduplication."""
     content = f"{error_msg[:100]}|{solution[:100]}"
-    return hashlib.md5(content.encode()).hexdigest()
+    return hashlib.md5(content.encode(), usedforsecurity=False).hexdigest()
 
 
 def create_error_record(

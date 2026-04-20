@@ -245,6 +245,168 @@ def cmd_recall(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_sync(args: argparse.Namespace) -> int:
+    """Sync all verified local data to the community brain."""
+    import httpx
+    from pathlib import Path
+
+    print("\n🌐 Syncing local vault404 data to Community Brain...")
+
+    # Supabase config
+    API_URL = "https://sbbhtxxegxkqjbfqcrwz.supabase.co/rest/v1"
+    API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiYmh0eHhlZ3hrcWpiZnFjcnd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3ODU4MjcsImV4cCI6MjA4OTM2MTgyN30.L4D9egjGWUbfpbGkZogVWPia4y6GBKjvJ0FhjB8fuIc"
+
+    headers = {
+        "Content-Type": "application/json",
+        "Prefer": "return=representation",
+        "apikey": API_KEY,
+        "Authorization": f"Bearer {API_KEY}",
+    }
+
+    data_dir = Path.home() / ".vault404"
+    if not data_dir.exists():
+        print("  No local vault404 data found.")
+        return 0
+
+    synced = {"fixes": 0, "decisions": 0, "patterns": 0}
+    errors = 0
+
+    # Sync error fixes
+    errors_dir = data_dir / "errors"
+    if errors_dir.exists():
+        for f in errors_dir.glob("*.json"):
+            try:
+                record = json.loads(f.read_text(encoding="utf-8"))
+                if not record.get("verified", False):
+                    continue  # Only sync verified
+
+                import hashlib
+                content = f"{record.get('error', {}).get('message', '')[:100]}|{record.get('solution', {}).get('description', '')[:100]}"
+                content_hash = hashlib.md5(content.encode(), usedforsecurity=False).hexdigest()
+
+                payload = {
+                    "content_hash": content_hash,
+                    "record_type": "error_fix",
+                    "category": record.get("category"),
+                    "language": record.get("context", {}).get("language"),
+                    "framework": record.get("context", {}).get("framework"),
+                    "database": record.get("context", {}).get("database"),
+                    "platform": record.get("context", {}).get("platform"),
+                    "error_data": record.get("error", {}),
+                    "solution_data": record.get("solution", {}),
+                    "verification_count": record.get("success_count", 1),
+                    "contributor_hash": "local_sync",
+                }
+
+                with httpx.Client() as client:
+                    resp = client.post(
+                        f"{API_URL}/community_solutions",
+                        headers=headers,
+                        json=payload,
+                        timeout=10.0,
+                    )
+                    if resp.status_code in (200, 201):
+                        synced["fixes"] += 1
+                    elif resp.status_code == 409:
+                        pass  # Duplicate, skip
+                    else:
+                        errors += 1
+            except Exception as e:
+                if args.verbose:
+                    print(f"  Error syncing {f.name}: {e}")
+                errors += 1
+
+    # Sync decisions
+    decisions_dir = data_dir / "decisions"
+    if decisions_dir.exists():
+        for f in decisions_dir.glob("*.json"):
+            try:
+                record = json.loads(f.read_text(encoding="utf-8"))
+
+                import hashlib
+                content = f"{record.get('title', '')[:100]}|{record.get('choice', '')[:100]}"
+                content_hash = hashlib.md5(content.encode(), usedforsecurity=False).hexdigest()
+
+                payload = {
+                    "content_hash": content_hash,
+                    "record_type": "decision",
+                    "category": record.get("component"),
+                    "language": record.get("language"),
+                    "framework": record.get("framework"),
+                    "error_data": {"title": record.get("title")},
+                    "solution_data": {
+                        "choice": record.get("choice"),
+                        "alternatives": record.get("alternatives", []),
+                        "pros": record.get("pros", []),
+                        "cons": record.get("cons", []),
+                        "deciding_factor": record.get("deciding_factor"),
+                    },
+                    "verification_count": 1,
+                    "contributor_hash": "local_sync",
+                }
+
+                with httpx.Client() as client:
+                    resp = client.post(
+                        f"{API_URL}/community_solutions",
+                        headers=headers,
+                        json=payload,
+                        timeout=10.0,
+                    )
+                    if resp.status_code in (200, 201):
+                        synced["decisions"] += 1
+            except Exception:
+                errors += 1
+
+    # Sync patterns
+    patterns_dir = data_dir / "patterns"
+    if patterns_dir.exists():
+        for f in patterns_dir.glob("*.json"):
+            try:
+                record = json.loads(f.read_text(encoding="utf-8"))
+
+                import hashlib
+                content = f"{record.get('name', '')[:100]}|{record.get('problem', '')[:100]}"
+                content_hash = hashlib.md5(content.encode(), usedforsecurity=False).hexdigest()
+
+                payload = {
+                    "content_hash": content_hash,
+                    "record_type": "pattern",
+                    "category": record.get("category"),
+                    "language": ",".join(record.get("languages", [])) if record.get("languages") else None,
+                    "framework": ",".join(record.get("frameworks", [])) if record.get("frameworks") else None,
+                    "error_data": {"name": record.get("name"), "problem": record.get("problem")},
+                    "solution_data": {
+                        "solution": record.get("solution"),
+                        "before_code": record.get("before_code"),
+                        "after_code": record.get("after_code"),
+                        "explanation": record.get("explanation"),
+                    },
+                    "verification_count": 1,
+                    "contributor_hash": "local_sync",
+                }
+
+                with httpx.Client() as client:
+                    resp = client.post(
+                        f"{API_URL}/community_solutions",
+                        headers=headers,
+                        json=payload,
+                        timeout=10.0,
+                    )
+                    if resp.status_code in (200, 201):
+                        synced["patterns"] += 1
+            except Exception:
+                errors += 1
+
+    print("\n✅ Sync complete!")
+    print(f"   Fixes synced:     {synced['fixes']}")
+    print(f"   Decisions synced: {synced['decisions']}")
+    print(f"   Patterns synced:  {synced['patterns']}")
+    if errors > 0:
+        print(f"   Errors:           {errors}")
+    print()
+    return 0
+
+
 def cmd_setup_claude(args: argparse.Namespace) -> int:
     """Configure vault404 for Claude Code with auto-allow permissions."""
     from pathlib import Path
@@ -375,6 +537,14 @@ Examples:
         help="Configure Claude Code (MCP server + auto-allow permissions)"
     )
     setup_claude_parser.set_defaults(func=cmd_setup_claude)
+
+    # sync - push local data to community brain
+    sync_parser = subparsers.add_parser(
+        "sync",
+        help="Sync all verified local data to the Community Brain"
+    )
+    sync_parser.add_argument("--verbose", "-v", action="store_true", help="Show detailed output")
+    sync_parser.set_defaults(func=cmd_sync)
 
     # stats
     stats_parser = subparsers.add_parser("stats", help="Show knowledge base statistics")

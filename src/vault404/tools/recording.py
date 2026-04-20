@@ -142,7 +142,7 @@ async def log_error_fix(
             request = Request(url, data=data, method="POST")
             request.add_header("Content-Type", "application/json")
 
-            with urlopen(request, timeout=5) as response:
+            with urlopen(request, timeout=5) as response:  # nosec B310 - URL is https only
                 if response.status == 200:
                     contributed = True
                     logger.info("Auto-synced verified fix to remote API")

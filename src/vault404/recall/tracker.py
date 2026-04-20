@@ -23,7 +23,7 @@ from pathlib import Path
 from typing import Optional
 from threading import Lock
 
-from .schemas import RecallEvent, Outcome, ensure_csv_exists, get_recall_csv_path
+from .schemas import RecallEvent, Outcome, ensure_csv_exists
 
 
 class RecallTracker:
@@ -49,7 +49,7 @@ class RecallTracker:
         """Generate stable scenario ID from error message."""
         # Normalize error message for stable hashing
         normalized = error_message.lower().strip()[:200]
-        hash_val = hashlib.md5(normalized.encode()).hexdigest()[:8]
+        hash_val = hashlib.md5(normalized.encode(), usedforsecurity=False).hexdigest()[:8]
         return f"scenario-{hash_val}"
 
     def _classify_scenario_group(self, error_message: str, context: Optional[dict] = None) -> str:

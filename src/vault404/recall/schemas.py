@@ -9,7 +9,7 @@ outcome,time_to_fix_min,latency_first_attempt_ms,tokens_in,tokens_out,notes
 
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
-from typing import Optional, Literal
+from typing import Optional
 from enum import Enum
 import csv
 import os
