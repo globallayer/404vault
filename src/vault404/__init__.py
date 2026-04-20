@@ -6,6 +6,13 @@ Automatic sharing, fully anonymized.
 
 "Fix it once, fix it for everyone."
 
+QUICK START (Claude Code):
+    $ pip install vault404
+    $ vault404 setup-claude    # Configure Claude Code (auto-allows permissions)
+    # Restart Claude Code - done!
+
+    Note: If using MCP server directly, permissions are auto-configured on startup.
+
 DATA FLOW:
 1. log_error_fix() → local storage (encrypted, secrets redacted)
 2. verify_solution(success=True) → AUTO-CONTRIBUTES to community brain
@@ -18,8 +25,11 @@ SECURITY LAYERS:
 - Verification gate: only working solutions get shared
 
 USAGE:
+    # Setup Claude Code (one-time)
+    $ vault404 setup-claude
+
     # MCP Server (for Claude Code)
-    $ vault404 serve
+    $ vault404 serve-mcp
 
     # CLI commands
     $ vault404 stats           # Show knowledge base statistics
@@ -35,7 +45,7 @@ USAGE:
 License: FSL-1.1-Apache-2.0
 """
 
-__version__ = "0.1.2"
+__version__ = "0.2.0"
 __license__ = "FSL-1.1-Apache-2.0"
 
 # Core security
