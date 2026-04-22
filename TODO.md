@@ -66,12 +66,15 @@
 
 ### Frontend — vault404.dev
 
-- [ ] Set up vault404.dev domain (DNS)
-- [ ] Build single-page live dashboard
+- [x] Set up vault404.dev domain (DNS + Vercel + SSL)
+- [x] Build single-page live dashboard
   - Live counter (found / patched / contributors)
   - Rolling feed (last 24h)
   - Severity breakdown chart
   - "Connect your AI agent" CTA
+- [x] Connect dashboard to live Supabase API
+- [x] Fix demo video (opens in new tab)
+- [x] Fix docs tabs (4 functional sections)
 
 ---
 

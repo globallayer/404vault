@@ -1,5 +1,45 @@
 # vault404 - Session Notes
 
+## 2026-04-22 - Frontend Live with API Integration
+
+### Summary
+Built and deployed vault404.dev frontend. Connected dashboard to live Supabase API data. Fixed demo video and docs tabs.
+
+### Changes
+- `web/index.html`: Added useLiveStats() and useLiveFeed() hooks for live API data
+- `web/index.html`: Dashboard now fetches from Supabase community_solutions table
+- `web/index.html`: Demo changed from iframe to link (security restriction fix)
+- `web/index.html`: Docs reduced from 25 non-functional tabs to 4 working sections
+- `web/vercel.json`: X-Frame-Options headers configured
+- `web/.vercel/project.json`: Correct Vercel project linking
+
+### Commits
+- `0f77391` feat: connect dashboard to live Supabase API data
+- `1893c2e` fix: replace demo iframe with link to avoid security restrictions
+- `12f1840` fix: make docs tabs functional and fix demo iframe
+- `54d0f81` feat: add vault404.dev static frontend
+
+### Deployment
+- Frontend: https://vault404.dev (Vercel)
+- DNS: GoDaddy → Vercel (76.76.21.21)
+- SSL: Issued via `vercel certs issue vault404.dev`
+
+### Stats
+- vault404: 448 total records
+- Local: 191 (35 fixes, 11 decisions, 22 patterns)
+- Community Brain: 257 (135 fixes, 13 decisions, 22 patterns)
+
+### Testing Needed
+- [ ] Verify dashboard shows live stats at vault404.dev
+- [ ] Confirm feed displays recent vulnerability patterns
+- [ ] Test demo video opens in new tab
+
+### Next Steps
+- Launch prep: README update, blog post, Reddit/X/HN submissions
+- Frontend polish: leaderboard, severity badges, social proof
+
+---
+
 ## 2026-04-21 - Vulnerability Intelligence Pivot Complete
 
 ### Summary
