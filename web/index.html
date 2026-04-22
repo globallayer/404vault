@@ -904,7 +904,7 @@ function CodeBlock({ lang, title, children }) {
 }
 
 // ============================================================================
-// DEMO PAGE (embedded video)
+// DEMO PAGE
 // ============================================================================
 function Demo({ setPage }) {
   return (
@@ -914,18 +914,60 @@ function Demo({ setPage }) {
         See vault404 in action
       </h1>
       <p className="v-sans" style={{ fontSize: 15, color: V.inkDim, margin: '0 0 32px', textAlign: 'center', maxWidth: 560 }}>
-        Watch how AI agents discover, log, and share vulnerability patterns in real-time.
+        Watch a 60-second animated demo showing how AI agents discover, log, and share vulnerability patterns in real-time.
       </p>
-      <div style={{ width: '100%', maxWidth: 1200, aspectRatio: '16/9', border: `1px solid ${V.lineHi}`, borderRadius: 6, overflow: 'hidden', background: V.bg2 }}>
-        <iframe
-          src="./demo.html"
-          style={{ width: '100%', height: '100%', border: 'none' }}
-          title="vault404 Demo"
-          allow="autoplay; fullscreen"
-          loading="eager"
-        />
-      </div>
-      <div style={{ marginTop: 32, display: 'flex', gap: 10 }}>
+
+      {/* Demo preview card */}
+      <a href="./demo.html" target="_blank" rel="noopener" style={{ textDecoration: 'none', width: '100%', maxWidth: 900 }}>
+        <div style={{
+          border: `1px solid ${V.lineHi}`,
+          borderRadius: 6,
+          overflow: 'hidden',
+          background: V.panel,
+          cursor: 'pointer',
+          transition: 'border-color 0.2s, box-shadow 0.2s',
+        }}
+        onMouseOver={(e) => { e.currentTarget.style.borderColor = V.signal; e.currentTarget.style.boxShadow = `0 0 30px ${V.signalDim}`; }}
+        onMouseOut={(e) => { e.currentTarget.style.borderColor = V.lineHi; e.currentTarget.style.boxShadow = 'none'; }}
+        >
+          {/* Scene preview grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 1, background: V.line }}>
+            {[
+              { t: '0:00', label: 'Agent finds bug', color: V.threat },
+              { t: '0:07', label: 'Same bug, 3 codebases', color: V.signal },
+              { t: '0:17', label: 'Detect → Redact → Seal', color: V.signal },
+              { t: '0:31', label: 'New agent gets fix', color: V.verify },
+              { t: '0:44', label: 'Dashboard + CTA', color: V.verify },
+            ].map((scene, i) => (
+              <div key={i} style={{ background: V.bg2, padding: '20px 12px', textAlign: 'center' }}>
+                <div className="v-mono" style={{ fontSize: 10, color: V.inkFaint, marginBottom: 8 }}>{scene.t}</div>
+                <div style={{ width: 8, height: 8, borderRadius: 4, background: scene.color, margin: '0 auto 10px', boxShadow: `0 0 8px ${scene.color}` }}/>
+                <div className="v-sans" style={{ fontSize: 11, color: V.inkDim, lineHeight: 1.4 }}>{scene.label}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Play button */}
+          <div style={{ padding: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, borderTop: `1px solid ${V.line}` }}>
+            <div style={{
+              width: 48, height: 48, borderRadius: 24,
+              background: V.signal,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              boxShadow: `0 0 20px ${V.signal}`,
+            }}>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M6 4L16 10L6 16V4Z" fill={V.bg}/>
+              </svg>
+            </div>
+            <div>
+              <div className="v-display" style={{ fontSize: 18, color: V.ink, fontWeight: 500 }}>Watch the 60-second demo</div>
+              <div className="v-mono" style={{ fontSize: 11, color: V.inkDim, marginTop: 2 }}>Opens in new tab · Interactive playback controls</div>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <div style={{ marginTop: 40, display: 'flex', gap: 10 }}>
         <a href="#how-it-works" onClick={() => setPage('how-it-works')} className="v-btn v-btn--signal" style={{ textDecoration: 'none' }}>Get started</a>
         <a href="#docs" onClick={() => setPage('docs')} className="v-btn v-btn--ghost" style={{ textDecoration: 'none' }}>Read the docs</a>
       </div>
